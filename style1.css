@@ -1,27 +1,25 @@
+/*global*/
 @import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,300..700&display=swap");
+
+:root {
+  --orange: #ff6500;
+  --bleu: #007bff;
+  --bleu-hover: #0056b3;
+  --orange-hover: #7c3201;
+}
+
 a {
   text-decoration: none;
 }
-header {
-  background: url(imge/head.jpg) center/cover no-repeat;
-  height: 700px;
-  position: relative;
+
+ul {
+  list-style: none;
 }
-header::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.677);
-}
-header * {
-  z-index: 10;
-}
-.logo h1 {
-  font-size: 24px;
-  color: #ffffff;
+
+/*nav bar*/
+.logo a {
+  font-size: 28px;
+  color: var(--orange);
   margin: 0;
   position: relative;
   left: 20px;
@@ -31,45 +29,77 @@ nav {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 1000px;
-  height: 50px;
-  border-radius: 0 0 25px 25px;
-  padding: 10px;
-  position: relative;
-  left: 200px;
-  transition: background-color 0.6s;
-}
-
-nav:hover {
-  background-color: #ff6500;
+  height: 70px;
+  background-color: #ffffff;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 nav ul {
-  list-style: none;
   display: flex;
-  gap: 15px;
+  gap: 25px;
   margin: 0;
   padding: 0;
 }
 
 nav ul li a:hover {
-  color: #7c3201;
-  text-decoration: underline;
+  color: var(--orange);
+  background-color: #fdf2e9;
 }
 
 nav ul li a {
-  color: #ffffff;
+  color: #34495e;
   font-weight: bold;
   font-size: 16px;
+  padding: 8px 12px;
+  border-radius: 5px;
   transition: color 0.3s;
 }
+
 .Profile {
   display: flex;
   color: #ffffff;
   font-weight: bold;
   position: relative;
   right: 20px;
+  padding: 10px 20px;
+  border-radius: 20px;
+  background-color: var(--bleu);
+  transition: background-color 0.3s;
 }
+
+.Profile:hover {
+  background-color: var(--bleu-hover);
+  transform: scale(1.1);
+}
+
+/* end nav bar */
+
+header {
+  background: url(imge/head.jpg) center/cover no-repeat;
+  height: 700px;
+  position: relative;
+  top: 60px;
+}
+
+header::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.677);
+}
+
+header * {
+  z-index: 10;
+}
+
 /*About-Us*/
 .about {
   display: flex;
@@ -79,12 +109,13 @@ nav ul li a {
   position: relative;
   top: 60px;
 }
+
 .about h1 {
   font-size: 60px;
   position: relative;
   top: 40px;
   letter-spacing: 4px;
-  color: #ff6500;
+  color: var(--orange);
 }
 
 .about p {
@@ -92,6 +123,7 @@ nav ul li a {
   text-align: center;
   color: #ffffff;
 }
+
 .about span {
   font-family: "Cormorant Garamond", serif;
   font-optical-sizing: auto;
@@ -103,15 +135,15 @@ nav ul li a {
   padding: 10px 20px;
   border: none;
   border-radius: 5px;
-  background-color: #ff6500;
-  color: #fff;
+  background-color: var(--orange);
+  color: #ffffff;
   font-size: 16px;
   cursor: pointer;
   transition: background-color 0.3s, transform 0.3s;
 }
 
 .btn button:hover {
-  background-color: #7c3201;
+  background-color: var(--orange-hover);
   transform: scale(1.1);
 }
 
@@ -135,7 +167,7 @@ nav ul li a {
 }
 
 .search input[type="text"]:focus {
-  border-color: #ff6500;
+  border-color: var(--orange);
 }
 
 .search button {
@@ -143,54 +175,63 @@ nav ul li a {
   margin-left: 10px;
   border: none;
   border-radius: 5px;
-  background-color: #ff6500;
-  color: #fff;
+  background-color: var(--orange);
+  color: #ffffff;
   font-size: 16px;
   cursor: pointer;
   transition: background-color 0.3s, transform 0.3s;
 }
 
 .search button:hover {
-  background-color: #ff6500;
+  background-color: var(--orange-hover);
   transform: scale(1.1);
 }
+
 /* end header */
 /* Categories Section */
-.category{
+main {
+  position: relative;
+  top: 60px;
+}
+
+.category {
   height: 700px;
 }
+
 .category h1 {
   font-size: 60px;
   text-align: center;
   margin-top: 50px;
   color: #000000;
 }
+
 .category p {
   text-align: center;
   font-family: "Cormorant Garamond", serif;
   font-optical-sizing: auto;
   font-size: 30px;
   font-style: italic;
-  color: #ff6500;
+  color: var(--orange);
   letter-spacing: 4px;
   position: relative;
   bottom: 30px;
 }
+
 /* items */
 .category img {
   width: 150px;
   height: 150px;
   border-radius: 50%;
   object-fit: cover;
-  border: 3px dashed #ff6500;
+  border: 3px dashed var(--orange);
   padding: 5px;
-  box-shadow: 0 0 10px #7c3201;
+  box-shadow: 0 0 10px var(--orange-hover);
   transition: transform 0.3s, box-shadow 0.3s;
 }
 
 .category img:hover {
   transform: scale(1.15);
-  box-shadow: 0 0 20px #7c3201;
+  box-shadow: 0 0 20px var(--orange-hover);
 }
 
 .category .items {
@@ -202,17 +243,21 @@ nav ul li a {
   left: 550px;
   position: relative;
 }
+
 .items-center {
   position: relative;
   left: 250px;
 }
+
 .item2 {
   position: relative;
   top: 30px;
 }
+
 .items a {
   transition: color 0.3s, text-decoration 0.3s;
 }
+
 .items a span {
   color: #000000;
   position: relative;
@@ -223,33 +268,37 @@ nav ul li a {
 }
 
 .items a :hover {
-  color: #7c3201;
+  color: var(--orange-hover);
   text-decoration: underline;
 }
 
 /* more-categories section  and more-world-cuisine section */
 
-.more-categories , .more-world-cuisine {
+.more-categories,
+.more-world-cuisine {
   display: flex;
   justify-content: center;
   align-items: center;
   margin-top: 20px;
 }
 
-.more-categories .view-more ,.more-world-cuisine .view-more-cuisine {
+.more-categories .view-more,
+.more-world-cuisine .view-more-cuisine {
   padding: 10px 20px;
-  background-color: #ff6500;
-  color: #fff;
+  background-color: var(--orange);
+  color: #ffffff;
   font-size: 16px;
   font-weight: bold;
   border-radius: 5px;
   transition: background-color 0.3s, transform 0.3s;
 }
 
-.more-categories .view-more:hover , .more-world-cuisine .view-more-cuisine:hover {
-  background-color: #7c3201;
+.more-categories .view-more:hover,
+.more-world-cuisine .view-more-cuisine:hover {
+  background-color: var(--orange-hover);
   transform: scale(1.1);
 }
+
 /* end categories */
 
 /* World Cuisine Section */
@@ -258,12 +307,14 @@ nav ul li a {
   background-color: #f9f9f9;
   height: 740px;
 }
+
 .world-cuisine-section h1 {
   font-size: 60px;
-  color: #ff6500;
+  color: var(--orange);
   position: relative;
   top: 50px;
 }
+
 .world-cuisine-section .idee {
   text-align: center;
   font-family: "Cormorant Garamond", serif;
@@ -286,7 +337,7 @@ nav ul li a {
 
 
 .cuisine-card {
-  background: #fff;
+  background: #ffffff;
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -316,8 +367,8 @@ nav ul li a {
 .learn-more {
   width: 90px;
   padding: 7px;
-  background-color: #007bff;
-  color: #fff;
+  background-color: var(--bleu);
+  color: #ffffff;
   border-radius: 5px;
   cursor: pointer;
   position: relative;
@@ -326,12 +377,77 @@ nav ul li a {
 }
 
 .learn-more:hover {
-  background-color: #0056b3;
+  background-color: var(--bleu-hover);
 }
 
 /* more-world-cuisine section */
 .more-world-cuisine {
-position: relative;
-top: 90px;
+  position: relative;
+  top: 90px;
 }
 
+/* end world cuisine section */
+
+/* Footer */
+footer {
+  background-color: #333;
+  color: #ffffff;
+  padding: 40px;
+  top: 60px;
+  position: relative;
+
+}
+
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  padding: 0px 100px 0px 100px;
+
+}
+
+.footer-section h2 {
+  color: var(--orange);
+}
+
+.footer-section p {
+  line-height: 2;
+  color: #f1ecec;
+}
+
+.footer-section ul {
+  padding: 0;
+}
+
+.footer-section ul li {
+  margin-bottom: 10px;
+}
+
+.footer-section ul li a {
+  color: #ccc;
+  transition: color 0.3s ease;
+}
+
+.footer-section ul li a:hover {
+  color: #ffffff;
+}
+
+.social-links {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.social-icon {
+  color: #ccc;
+  transition: color 0.3s;
+}
+
+.social-icon:hover {
+  color: #fff;
+}
+
+.footer-bottom {
+  text-align: center;
+  margin-top: 30px;
+  color: #ccc;
+}
