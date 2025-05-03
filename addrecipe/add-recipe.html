@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style-add-recipe.css">
+  <title>Document</title>
+</head>
+
+<body>
+  <!--nav-->
+  <nav>
+    <div class="logo">
+      <a href="">logo</a>
+    </div>
+    <ul>
+      <li><a href="../indext.html">Home</a></li>
+      <li><a href="">About-us</a></li>
+      <li><a href="">Category </a></li>
+      <li><a href="">World Cuisine</a></li>
+      <li><a href="">Best Recipes</a></li>
+      <li><a href="">Latest recipes</a></li>
+      <li><a href="">Contact us</a></li>
+
+    </ul>
+    <a class="Profile" href="">Profile</a>
+  </nav>
+  <!--end nav-->
+  <!-- main -->
+  <main>
+    <div class="all">
+      <h1> Add your recipe</h1>
+      <div class="form">
+        <form id="recipe-form" method="post"  enctype="multipart/form-data" >
+          <!--Name and category-->
+          <div class="partie1">
+            <h2>Information of recipe</h2>
+            <div class="name-recipe">
+              <label for="recipe-title">Name recipe</label>
+              <input type="text" name="name" id="name" required>
+            </div>
+            <div class="category-recipe">
+              <label>Category</label>
+              <select name="category" required class="category" id="category">
+                <option value=" ">select a category</option>
+                <option value="Lunch">Lunch</option>
+                <option value="Desserts">Desserts</option>
+                <option value="Jus">Jus</option>
+                <option value="Entrance">Entrance</option>
+                <option value="Vegetarian">Vegetarian</option>
+                <option value="Quick&Easy Recipe">Quick&Easy Recipe</option>
+                <option value="For GYM">For GYM</option>
+                <option value="Breakfast">Breakfast</option>
+
+
+              </select>
+            </div>
+            <div class="world-recipe">
+              <label>Recipe of country</label>
+              <select name="country">
+                <option value="">select a country</option>
+                <option value="Morocco">Morocco</option>
+                <option value="France">France</option>
+                <option value="Canada">Canada</option>
+                <option value="Korea">Korea</option>
+                <option value="Italy">Italy</option>
+                <option value="Japon">Japon</option>
+                <option value="Brazil">Brazil</option>
+                <option value="Belgium">Belgium</option>
+              </select>
+            </div>
+            <!--time and difficulty-->
+            <div class="time-deficulty-recipe">
+              <div class="time-recipe">
+                <label>Time of recipe (minute)</label>
+                <input type="number" name="time" required min="1" >
+              </div>
+              <div class="difficulty">
+                <label>Difficulty</label>
+                <select name="difficulty" required>
+                  <option value="easy">Easy</option>
+                  <option value="Medium">Medium</option>
+                  <option value="hard">Hard</option>
+                </select>
+              </div>
+            </div>
+            <!--description-->
+            <div class="description-recipe">
+              <label>Description</label>
+              <textarea name="description" rows="3"></textarea>
+            </div>
+          </div>
+          <!--image-->
+          <div class="partie2">
+            <h2>Image of recipe</h2>
+            <div class="image-recipe">
+              <p>Upload an image of your recipe:</p>
+              <input type="file" name="image" id="image" accept="image/*" required>
+            </div>
+          </div>
+          <!--ingredient-->
+          <div class="partie3">
+            <h2>Ingredient</h2>
+            <div class="ingredient-liste" id="ingredient-list">
+              <div class="ingredient-item" id="ingredient-item">
+                <input type="text" placeholder="Quantity" class="ingredient-quantity" name="ingredient-quantity" required>
+                <input type="text" placeholder="Unit" class="ingredient-unit" name="ingredient-unit" required>
+                <input type="text" placeholder="Ingredient" class="ingredient-name" name="ingredient-name" required>
+                <button type="button" class="remove-ingredient">X</button>
+              </div>
+            </div>
+
+            <button type="button" class="add-ingredient" id="add-ingredient">
+              + Add ingredient
+            </button>
+          </div>
+          <!--les etapes-->
+          <div class="partie4">
+            <h2>Preparation</h2>
+            <div class="step-list" id="step-list">
+              <div class="preparation-item">
+                <input type="text" placeholder="Step" class="preparation-step" name="preparation-step" required>
+                <button type="button" class="remove-preparation">X</button>
+              </div>
+            </div>
+
+            <button type="button" class="add-preparation" id="add-preparation">
+              + Add preparation step
+            </button>
+          </div>
+          <!--nutrition-->
+          <div class="partie5">
+            <h2>Nutrition</h2>
+            <div class="nutrition-grid">
+              <div class="calories">
+                <label>Calories</label>
+                <input type="number" name="calories" class="nutrition" min="0" >
+              </div>
+              <div class="protein">
+                <label>proteins (g)</label>
+                <input type="number" name="proteins" class="nutrition" min="0" >
+              </div>
+              <div class="Glucides">
+                <label>carbs (g)</label>
+                <input type="number" id="carbs" name="carbs" class="nutrition" min="0" >
+              </div>
+              <div class="Fats">
+                <label>Fats (g)</label>
+                <input type="number" name="fats" class="nutrition" min="0" >
+              </div>
+            </div>
+          </div>
+          <div class="partie6">
+            <button type="submit" class="btn" id="btn"> Publish Recipe </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+  <!--footer-->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-section">
+        <h2>About Us</h2>
+        <p>
+          We are a passionate team of food enthusiasts dedicated to sharing <br>
+          delicious recipes and culinary inspiration from around the world.<br>
+          Join us on this flavorful journey!</p>
+      </div>
+      <div class="footer-section">
+        <h2>Quick Links</h2>
+        <ul>
+          <li><a href="#about">About Us</a></li>
+          <li><a href="#category">Categories</a></li>
+          <li><a href="#world-cuisine">World Cuisine</a></li>
+          <li><a href="">Contact Us</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h2>Connect With Us</h2>
+        <div class="social-links">
+          <a href="#" class="social-icon">Facebook</a>
+          <a href="#" class="social-icon">Instagram</a>
+          <a href="#" class="social-icon">Youtube</a>
+          <a href="#" class="social-icon">Pinterest</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2025 site. All Rights Reserved.</p>
+    </div>
+         
+  </footer>
+  <!--end footer-->
+
+  <script src="script-add-recip.js"></script>
+</body>
+
+</html>
