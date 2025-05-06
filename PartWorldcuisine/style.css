@@ -1,0 +1,97 @@
+.world-cuisine-section {
+    text-align: center;
+    background-color: #f9f9f9;
+    height: 740px;
+    text-decoration-style: none;
+  }
+  .world-cuisine-section h1 {
+    font-size: 60px;
+    color: var(--orange);
+    position: relative;
+    top: 50px;
+  }
+  .world-cuisine-section .idee {
+    text-align: center;
+    font-family: "Cormorant Garamond", serif;
+    font-optical-sizing: auto;
+    font-size: 30px;
+    font-style: italic;
+    color: #000000;
+    letter-spacing: 4px;
+    position: relative;
+    top: 20px;
+    text-decoration: none;
+  }
+  .world-cuisine-grid {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    position: relative;
+    top: 50px;
+  }
+  
+  
+  .cuisine-card {
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    width: 300px;
+    height: 350px;
+  }
+  
+  .cuisine-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+    text-decoration: none;
+  }
+  
+  .cuisine-card img {
+    width: 100%;
+    height: 170px;
+  }
+  
+  .cuisine-info h3 {
+    color: #333;
+    text-decoration: none;
+  }
+  
+  .cuisine-info p {
+    font-size: 15px;
+    color: #666;
+    text-decoration-line: none;
+    text-decoration-style: none;
+  }
+  
+  .recipes {
+    width: 90px;
+    padding: 7px;
+    background-color: rgb(204, 139, 33);
+    color: #ffffff;
+    border-radius: 5px;
+    cursor: pointer;
+    position: relative;
+    left: 32%;
+    transition:  0.3s ease;
+    text-decoration-style: none;
+    text-decoration-line: none;
+    
+  }
+  
+  .recipes:hover {
+
+    background-color: rgb(136, 94, 22);
+    width: 50%;
+    height: 50%;
+  }
+  a{
+    text-decoration: none;
+  }
+             
+
+
+
+
+
+
+ 
