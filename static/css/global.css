@@ -1,0 +1,150 @@
+/*global*/
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,300..700&display=swap");
+
+
+:root {
+  --orange: #ff6500;
+  --bleu: #007bff;
+  --bleu-hover: #0056b3;
+  --orange-hover: #7c3201;
+}
+
+a {
+  text-decoration: none;
+}
+
+ul {
+  list-style: none;
+}
+
+/*nav bar*/
+.logo a {
+  font-size: 28px;
+  color: var(--orange);
+  margin: 0;
+  position: relative;
+  left: 20px;
+}
+
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 70px;
+  background-color: #ffffff;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+nav ul {
+  display: flex;
+  gap: 80px;
+  margin: 0;
+  padding: 0;
+}
+
+nav ul li a:hover {
+  color: var(--orange);
+  background-color: #fdf2e9;
+}
+
+nav ul li a {
+  color: #34495e;
+  font-weight: bold;
+  font-size: 16px;
+  padding: 8px 12px;
+  border-radius: 5px;
+  transition: color 0.3s;
+}
+
+.Profile {
+  display: flex;
+  color: #ffffff;
+  font-weight: bold;
+  position: relative;
+  right: 20px;
+  padding: 10px 20px;
+  border-radius: 20px;
+  background-color: var(--bleu);
+  transition: background-color 0.3s;
+}
+
+.Profile:hover {
+  background-color: var(--bleu-hover);
+  transform: scale(1.1);
+}
+
+.logo img {
+  width: 170px;
+  height: 110px;
+  position: relative;
+  top: 10px;
+  left: 20px;
+}
+
+/* end nav bar */
+/* Footer */
+footer {
+  background-color: #333;
+  color: #ffffff;
+  padding-top: 40px;
+  
+}
+.footer{ 
+  background-color: #333;
+  color: #ffffff;
+}
+
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  padding-right: 150px ;
+  position: relative;
+  top: 40px;
+
+}
+
+.footer-section h2 {
+  color: var(--orange);
+}
+
+.footer-logo {
+  display: flex;
+  width: 350px;
+  height: 250px;
+  position: relative;
+  left: 50px;
+}
+
+
+.footer-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.footer-section a {
+  color: #ccc;
+  transition: color 0.3s;
+}
+
+.footer-section a:hover {
+  color: #fff;
+}
+
+.ligne{
+  width: 70%;
+  height: 1px;
+  background-color: #ccc;
+  margin: 20px auto;
+
+  
+}
+.footer-bottom {
+  text-align: center;
+  color: #ccc;
+}

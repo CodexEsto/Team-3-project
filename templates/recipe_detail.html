@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/global.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/recipe.css') }}">
+    <title>{{ recipe.name }} - Détails de la Recette</title>
+
+</head>
+
+<body>
+    <!--nav-->
+    <nav>
+        <div class="logo">
+            <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo" />
+        </div>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/#about">About-us</a></li>
+            <li><a href="/#category">Category</a></li>
+            <li><a href="/#world-cuisine">World Cuisine</a></li>
+            <li><a href="#">Contact us</a></li>
+        </ul>
+        <a class="Profile" href="#">Profile</a>
+    </nav>
+
+    <main>
+        <div class="recipe-container">
+            <h1 class="recipe-title">{{ recipe.name }}</h1>
+
+            <div class="recipe-image-container">
+                <img src="{{ url_for('static', filename=recipe.image) }}" alt="{{ recipe.name }}" class="recipe-image">
+            </div>
+
+            <div class="recipe-info">
+                <div><strong>Category:</strong> {{ recipe.category }}</div>
+                <div><strong>Country:</strong> {{ recipe.country }}</div>
+                <div><strong> Time :</strong> {{ recipe.time }} min</div>
+                <div><strong>difficulty:</strong> {{ recipe.difficulty }}</div>
+            </div>
+
+            <div class="recipe-section">
+                <h2 class="section-title">Description</h2>
+                <p>{{ recipe.description }}</p>
+            </div>
+
+            <div class="recipe-section">
+                <h2 class="section-title">Ingredient</h2>
+                <ul class="ingredient-list">
+                    {% for ingredient in ingredients %}
+                    <li>{{ ingredient.quantity }} {{ ingredient.unit }} {{ ingredient.ingredient_name }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <div class="recipe-section">
+                <h2 class="section-title">Step</h2>
+                <ol class="step-list">
+                    {% for step in steps %}
+                    <li>{{ step.etape }}</li>
+                    {% endfor %}
+                </ol>
+            </div>
+
+            {% if recipe.calories or recipe.proteins or recipe.carbs or recipe.fats %}
+            <div class="recipe-section">
+                <h2 class="section-title">nutrition</h2>
+                <div class="nutrition-container">
+                    {% if recipe.calories %}
+                    <div class="nutrition-box">
+                        <strong>Calories</strong><br>{{ recipe.calories }} kcal
+                    </div>
+                    {% endif %}
+                    {% if recipe.proteins %}
+                    <div class="nutrition-box">
+                        <strong>protein</strong><br>{{ recipe.proteins }} g
+                    </div>
+                    {% endif %}
+                    {% if recipe.carbs %}
+                    <div class="nutrition-box">
+                        <strong>carbs</strong><br>{{ recipe.carbs }} g
+                    </div>
+                    {% endif %}
+                    {% if recipe.fats %}
+                    <div class="nutrition-box">
+                        <strong>fats</strong><br>{{ recipe.fats }} g
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </main>
+
+    <!--footer-->
+    <div class="footer">
+        <div class="footer-content">
+            <div class="footer-logo">
+                <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo" />
+            </div>
+            <div class="footer-section">
+                <h2>Quick Links</h2>
+
+                <a href="#about">About Us</a>
+                <a href="#category">Categories</a>
+                <a href="#world-cuisine">World Cuisine</a>
+                <a href="">Contact Us</a>
+
+            </div>
+            <div class="footer-section">
+                <h2>Connect With Us</h2>
+
+                <a href="#" class="social-icon">Facebook</a>
+                <a href="#" class="social-icon">Instagram</a>
+                <a href="#" class="social-icon">Youtube</a>
+                <a href="#" class="social-icon">Pinterest</a>
+
+            </div>
+        </div>
+        <div class="ligne"></div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 site. All Rights Reserved.</p>
+        </div>
+             
+    </div>
+</body>
+
+</html>

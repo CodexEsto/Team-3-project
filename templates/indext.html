@@ -4,7 +4,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="style1.css" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css')}}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/global.css')}}">
   <title>Document</title>
 </head>
 
@@ -12,15 +13,13 @@
   <!--nav-->
   <nav>
     <div class="logo">
-      <a href="">logo</a>
+      <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo" />
     </div>
     <ul>
-      <li><a href="">Home</a></li>
+      <li><a href="/">Home</a></li>
       <li><a href="#about">About-us</a></li>
       <li><a href="#category">Category </a></li>
       <li><a href="#world-cuisine">World Cuisine</a></li>
-      <li><a href="">Best Recipes</a></li>
-      <li><a href="">Latest recipes</a></li>
       <li><a href="">Contact us</a></li>
 
     </ul>
@@ -38,7 +37,7 @@
       </p>
       <div class="btn">
         <form action="">
-          <a href="addrecipe/add-recipe.html"> <button type="button">Your recipes</button></a>
+          <a href="{{ url_for('add_recipe_form') }}"> <button type="button">Your recipes</button></a>
         </form>
       </div>
       <div class="search">
@@ -59,30 +58,30 @@
       <div class="items">
         <div class="items-left">
           <div class="item">
-            <a href=""><img src="imge/food1.jpg" alt="" /><span>Lunch</span></a>
+            <a href=""><img src="{{ url_for('static', filename='img/home/food1.jpg') }}" alt="" /><span>Lunch</span></a>
           </div>
 
           <div class="item2">
-            <a href=""><img src="imge/food2.jpg" alt="" /><span>Quick & Easy Recipes</span></a>
+            <a href=""><img src="{{ url_for('static', filename='img/home/food2.jpg') }}" alt="" /><span>Quick & Easy Recipes</span></a>
           </div>
         </div>
 
         <div class="items-center">
           <div class="item">
-            <a href=""><img src="imge/food3.jpg" alt="" /><span>For GYM</span></a>
+            <a href=""><img src="{{ url_for('static', filename='img/home/food3.jpg') }}" alt="" /><span>For GYM</span></a>
           </div>
 
           <div class="item2">
-            <a href=""><img src="imge/food4.jpg" alt="" /><span>Desserts</span></a>
+            <a href=""><img src="{{ url_for('static', filename='img/home/food4.jpg') }}" alt="" /><span>Desserts</span></a>
           </div>
         </div>
 
         <div class="items-right">
           <div class="item">
-            <a href=""><img src="imge/food5.jpg" alt="" /><span>Vegetarian</span></a>
+            <a href=""><img src="{{ url_for('static', filename='img/home/food5.jpg') }}" alt="" /><span>Vegetarian</span></a>
           </div>
           <div class="item2">
-            <a href=""><img src="imge/food6.jpg" alt="" /><span>Jus</span></a>
+            <a href=""><img src="{{ url_for('static', filename='img/home/food6.jpg') }}" alt="" /><span>Jus</span></a>
           </div>
         </div>
       </div>
@@ -97,8 +96,8 @@
       <p class="idee">Embark on a culinary journey across the globe</p>
       <div class="world-cuisine-grid">
         <div class="cuisine-card">
-          <a href="">
-            <img src="imge/contri1.png" alt="Moroccan Cuisine" />
+          <a href="/country/Morocco">
+            <img src="{{ url_for('static', filename='img/home/contri1.png') }}" alt="Moroccan Cuisine" />
             <div class="cuisine-info">
               <h3>Morocco</h3>
               <p>
@@ -110,8 +109,8 @@
 
         </div>
         <div class="cuisine-card">
-          <a href="">
-            <img src="imge/contri2.png" alt="French Cuisine" />
+          <a href="/country/France">
+            <img src="{{ url_for('static', filename='img/home/contri2.png') }}" alt="French Cuisine" />
             <div class="cuisine-info">
               <h3>France</h3>
               <p>
@@ -123,8 +122,8 @@
 
         </div>
         <div class="cuisine-card">
-          <a href="">
-            <img src="imge/contri3.png" alt="Canadian Cuisine" />
+          <a href="/country/Canada">
+            <img src="{{ url_for('static', filename='img/home/contri3.png') }}" alt="Canadian Cuisine" />
             <div class="cuisine-info">
               <h3>Canada</h3>
               <p>
@@ -136,7 +135,7 @@
         </div>
       </div>
       <div class="more-world-cuisine">
-        <a href="" class="view-more-cuisine">View More World Cuisine</a>
+        <a href="{{ url_for('world_cuisine') }}" class="view-more-cuisine">View More World Cuisine</a>
       </div>
     </div>
     <!--end world cuisine-->
@@ -145,32 +144,29 @@
   <!-- footer -->
   <footer>
     <div class="footer-content">
-      <div class="footer-section">
-        <h2>About Us</h2>
-        <p>
-          We are a passionate team of food enthusiasts dedicated to sharing <br>
-          delicious recipes and culinary inspiration from around the world.<br>
-          Join us on this flavorful journey!</p>
+      <div class="footer-logo">
+        <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo"/>
       </div>
       <div class="footer-section">
         <h2>Quick Links</h2>
-        <ul>
-          <li><a href="#about">About Us</a></li>
-          <li><a href="#category">Categories</a></li>
-          <li><a href="#world-cuisine">World Cuisine</a></li>
-          <li><a href="">Contact Us</a></li>
-        </ul>
+        
+          <a href="#about">About Us</a>
+          <a href="#category">Categories</a>
+          <a href="#world-cuisine">World Cuisine</a>
+          <a href="">Contact Us</a>
+        
       </div>
       <div class="footer-section">
         <h2>Connect With Us</h2>
-        <div class="social-links">
+        
           <a href="#" class="social-icon">Facebook</a>
           <a href="#" class="social-icon">Instagram</a>
           <a href="#" class="social-icon">Youtube</a>
           <a href="#" class="social-icon">Pinterest</a>
-        </div>
+        
       </div>
     </div>
+    <div class="ligne"></div>
     <div class="footer-bottom">
       <p>&copy; 2025 site. All Rights Reserved.</p>
     </div>

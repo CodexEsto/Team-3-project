@@ -8,9 +8,9 @@ AddIngr.onclick = function () {
     let newIngredient = document.createElement("div");
     newIngredient.className = "ingredient-item";
     newIngredient.innerHTML = `
-            <input type="text" placeholder="Quantity" class="ingredient-quantity" name="ingredient-quantity" required>
-            <input type="text" placeholder="Unit" class="ingredient-unit" name="ingredient-unit" required>
-            <input type="text" placeholder="Ingredient" class="ingredient-name" name="ingredient-name" required>
+            <input type="text" placeholder="Quantity" class="ingredient-quantity" name="quantity[]" required>
+            <input type="text" placeholder="Unit" class="ingredient-unit" name="unit[]" required>
+            <input type="text" placeholder="Ingredient" class="ingredient-name" name="ingredient_name[]" required>
             <button type="button" class="remove-ingredient">X</button>`;
     newIngredient.querySelector('.remove-ingredient').addEventListener('click', function () {
         newIngredient.remove();
@@ -27,7 +27,7 @@ AddStep.onclick = function () {
     let newStep = document.createElement("div");
     newStep.className = "preparation-item";
     newStep.innerHTML = `
-            <input type="text" placeholder="Step" class="preparation-step" name="preparation-step" required>
+            <input type="text" placeholder="Step" class="preparation-step" name="preparation_step[]" required>
             <button type="button" class="remove-preparation">X</button>`;
     newStep.querySelector('.remove-preparation').addEventListener('click', function () {
         newStep.remove();
@@ -47,7 +47,7 @@ document.getElementById("recipe-form").onsubmit = function () {
     let unitInputs = document.getElementsByClassName("ingredient-unit");
     let nameInputs = document.getElementsByClassName("ingredient-name");
     let stepItems = document.getElementsByClassName("preparation-item");
-    let stepInputs = document.getElementsByClassName("preparation-step");
+    let stepInputs = document.getElementsByClassName("preparation_step");
 
     // Validate Recipe Name
     if (recipeName === "") {

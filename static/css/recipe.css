@@ -1,0 +1,94 @@
+/* Recipe Detail Page Styles */
+
+/* Main content area */
+main {
+    margin-top: 90px;
+    padding: 20px;
+}
+
+.recipe-container {
+    max-width: 800px;
+    margin: 0 auto;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Recipe title */
+.recipe-title {
+    color: #ff6500;
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 20px;
+}
+
+/* Recipe image container */
+.recipe-image-container {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.recipe-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
+
+/* Recipe info box */
+.recipe-info {
+    display: flex;
+    justify-content: space-between;
+    margin: 20px 0;
+    background: #f9f9f9;
+    padding: 15px;
+    border-radius: 8px;
+    flex-wrap: wrap;
+}
+
+.recipe-info div {
+    margin: 5px 10px;
+}
+
+/* Recipe sections */
+.recipe-section {
+    margin: 20px 0;
+}
+
+.section-title {
+    color: #ff6500;
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+}
+
+/* Ingredient list */
+.ingredient-list li {
+    margin-bottom: 8px;
+    list-style-type: disc;
+    margin-left: 20px;
+}
+
+/* Step list */
+.step-list li {
+    margin-bottom: 15px;
+    padding-left: 10px;
+}
+
+/* Nutrition section */
+.nutrition-container {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.nutrition-box {
+    background: #f9f9f9;
+    padding: 10px;
+    margin: 5px;
+    border-radius: 5px;
+    text-align: center;
+    min-width: 100px;
+    flex-grow: 1;
+    max-width: calc(25% - 10px);
+}
+

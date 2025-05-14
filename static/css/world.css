@@ -1,7 +1,11 @@
+body{
+  background-color: #f9f9f9;
+  
+}
 .world-cuisine-section {
     text-align: center;
     background-color: #f9f9f9;
-    height: 740px;
+    height: 600px;
     text-decoration-style: none;
   }
   .world-cuisine-section h1 {

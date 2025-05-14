@@ -4,27 +4,26 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="style-add-recipe.css">
-  <title>Document</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style-add-recipe.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/global.css') }}">
+  <title>Add Recipe</title>
 </head>
 
 <body>
   <!--nav-->
   <nav>
     <div class="logo">
-      <a href="">logo</a>
+      <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo" />
     </div>
     <ul>
-      <li><a href="../indext.html">Home</a></li>
-      <li><a href="">About-us</a></li>
-      <li><a href="">Category </a></li>
-      <li><a href="">World Cuisine</a></li>
-      <li><a href="">Best Recipes</a></li>
-      <li><a href="">Latest recipes</a></li>
+      <li><a href="/">Home</a></li>
+      <li><a href="/#about">About-us</a></li>
+      <li><a href="/#category">Category </a></li>
+      <li><a href="/#world-cuisine">World Cuisine</a></li>
       <li><a href="">Contact us</a></li>
 
     </ul>
-    <a class="Profile" href="">Profile</a>
+    <a class="Profile" href="#">Profile</a>
   </nav>
   <!--end nav-->
   <!-- main -->
@@ -32,7 +31,7 @@
     <div class="all">
       <h1> Add your recipe</h1>
       <div class="form">
-        <form id="recipe-form" method="post"  enctype="multipart/form-data" >
+        <form id="recipe-form" method="post" enctype="multipart/form-data" action="/addrecipe/submit">
           <!--Name and category-->
           <div class="partie1">
             <h2>Information of recipe</h2>
@@ -74,7 +73,7 @@
             <div class="time-deficulty-recipe">
               <div class="time-recipe">
                 <label>Time of recipe (minute)</label>
-                <input type="number" name="time" required min="1" >
+                <input type="number" name="time" required min="1">
               </div>
               <div class="difficulty">
                 <label>Difficulty</label>
@@ -104,9 +103,9 @@
             <h2>Ingredient</h2>
             <div class="ingredient-liste" id="ingredient-list">
               <div class="ingredient-item" id="ingredient-item">
-                <input type="text" placeholder="Quantity" class="ingredient-quantity" name="ingredient-quantity" required>
-                <input type="text" placeholder="Unit" class="ingredient-unit" name="ingredient-unit" required>
-                <input type="text" placeholder="Ingredient" class="ingredient-name" name="ingredient-name" required>
+                <input type="text" placeholder="Quantity" class="ingredient-quantity" name="quantity[]" required>
+                <input type="text" placeholder="Unit" class="ingredient-unit" name="unit[]" required>
+                <input type="text" placeholder="Ingredient" class="ingredient-name" name="ingredient_name[]" required>
                 <button type="button" class="remove-ingredient">X</button>
               </div>
             </div>
@@ -120,7 +119,7 @@
             <h2>Preparation</h2>
             <div class="step-list" id="step-list">
               <div class="preparation-item">
-                <input type="text" placeholder="Step" class="preparation-step" name="preparation-step" required>
+                <input type="text" placeholder="Step" class="preparation-step" name="preparation_step[]" required>
                 <button type="button" class="remove-preparation">X</button>
               </div>
             </div>
@@ -135,19 +134,19 @@
             <div class="nutrition-grid">
               <div class="calories">
                 <label>Calories</label>
-                <input type="number" name="calories" class="nutrition" min="0" >
+                <input type="number" name="calories" class="nutrition" min="0">
               </div>
               <div class="protein">
                 <label>proteins (g)</label>
-                <input type="number" name="proteins" class="nutrition" min="0" >
+                <input type="number" name="proteins" class="nutrition" min="0">
               </div>
               <div class="Glucides">
                 <label>carbs (g)</label>
-                <input type="number" id="carbs" name="carbs" class="nutrition" min="0" >
+                <input type="number" id="carbs" name="carbs" class="nutrition" min="0">
               </div>
               <div class="Fats">
                 <label>Fats (g)</label>
-                <input type="number" name="fats" class="nutrition" min="0" >
+                <input type="number" name="fats" class="nutrition" min="0">
               </div>
             </div>
           </div>
@@ -159,42 +158,39 @@
     </div>
   </main>
   <!--footer-->
-  <footer>
+  <div class="footer">
     <div class="footer-content">
-      <div class="footer-section">
-        <h2>About Us</h2>
-        <p>
-          We are a passionate team of food enthusiasts dedicated to sharing <br>
-          delicious recipes and culinary inspiration from around the world.<br>
-          Join us on this flavorful journey!</p>
+      <div class="footer-logo">
+        <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo" />
       </div>
       <div class="footer-section">
         <h2>Quick Links</h2>
-        <ul>
-          <li><a href="#about">About Us</a></li>
-          <li><a href="#category">Categories</a></li>
-          <li><a href="#world-cuisine">World Cuisine</a></li>
-          <li><a href="">Contact Us</a></li>
-        </ul>
+
+        <a href="#about">About Us</a>
+        <a href="#category">Categories</a>
+        <a href="#world-cuisine">World Cuisine</a>
+        <a href="">Contact Us</a>
+
       </div>
       <div class="footer-section">
         <h2>Connect With Us</h2>
-        <div class="social-links">
-          <a href="#" class="social-icon">Facebook</a>
-          <a href="#" class="social-icon">Instagram</a>
-          <a href="#" class="social-icon">Youtube</a>
-          <a href="#" class="social-icon">Pinterest</a>
-        </div>
+
+        <a href="#" class="social-icon">Facebook</a>
+        <a href="#" class="social-icon">Instagram</a>
+        <a href="#" class="social-icon">Youtube</a>
+        <a href="#" class="social-icon">Pinterest</a>
+
       </div>
     </div>
+    <div class="ligne"></div>
     <div class="footer-bottom">
       <p>&copy; 2025 site. All Rights Reserved.</p>
     </div>
          
-  </footer>
+  </div>
   <!--end footer-->
 
-  <script src="script-add-recip.js"></script>
+  <script src="{{ url_for('static', filename='js/script-add-recip.js') }}"></script>
 </body>
 
 </html>

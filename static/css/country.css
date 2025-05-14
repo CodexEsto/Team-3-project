@@ -1,0 +1,90 @@
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,300..700&display=swap");
+
+:root {
+    --orange: #ff6500;
+    --bleu: #007bff;
+    --bleu-hover: #0056b3;
+    --orange-hover: #7c3201;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+}
+
+/* Styles for recipe cards */
+.recipes-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    padding: 20px;
+    margin-top: 90px;
+}
+
+.recipe-card {
+    width: 300px;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s;
+}
+
+.recipe-card:hover {
+    transform: translateY(-5px);
+}
+
+.recipe-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.recipe-info {
+    padding: 15px;
+}
+
+.recipe-title {
+    color: var(--orange);
+    margin-top: 0;
+}
+
+.recipe-meta {
+    display: flex;
+    justify-content: space-between;
+    margin: 10px 0;
+    font-size: 0.9em;
+    color: #666;
+}
+
+.view-button {
+    display: inline-block;
+    background: var(--orange);
+    color: white;
+    padding: 8px 15px;
+    border-radius: 5px;
+    text-decoration: none;
+    margin-top: 10px;
+    transition: background-color 0.3s;
+}
+
+.view-button:hover {
+    background-color: var(--orange-hover);
+}
+
+.no-recipes {
+    text-align: center;
+    padding: 40px;
+    font-size: 18px;
+    color: #666;
+}
+.recipes-container h1{
+width: 100%;
+ text-align: center;
+  font-size: 60px;
+  letter-spacing: 4px;
+  color: var(--orange);
+}
+        
