@@ -102,7 +102,7 @@ INSERT INTO preparation_steps (recipe_id, step_number, etape) VALUES
 -- maroc
 -- (Harira)
 INSERT INTO recipes (name, category, country, time, difficulty, description, image, calories, proteins, carbs, fats)
-VALUES ('Harira Soup', 'Soup', 'Morocco', 60, 'medium', 
+VALUES ('Harira Soup', 'Lunch', 'Morocco', 60, 'medium', 
 'A traditional Moroccan soup with lentils, chickpeas and aromatic spices, often served during Ramadan.',
 'uploads/harira.jpg', 250, 10, 35, 8);
 SET @recipe_id := LAST_INSERT_ID();
