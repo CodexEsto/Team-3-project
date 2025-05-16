@@ -1,9 +1,13 @@
 -- Active: 1746462800040@@127.0.0.1@3306@recipe_db
-CREATE DATABASE IF NOT EXISTS recipe_db;
 
+-- =============================================
+-- Database Creation and Schema
+-- =============================================
+
+CREATE DATABASE IF NOT EXISTS recipe_db;
 USE recipe_db;
 
--- Création de la table principale des recettes
+-- Recipe Tables
 CREATE TABLE recipes (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
@@ -19,7 +23,6 @@ CREATE TABLE recipes (
     fats INT
 );
 
--- Création de la table des ingrédients
 CREATE TABLE ingredients (
     id INT AUTO_INCREMENT PRIMARY KEY,
     recipe_id INT NOT NULL,
@@ -29,7 +32,6 @@ CREATE TABLE ingredients (
     FOREIGN KEY (recipe_id) REFERENCES recipes (id) ON DELETE CASCADE
 ); 
 
--- Création de la table des étapes de préparation
 CREATE TABLE preparation_steps (
     id INT AUTO_INCREMENT PRIMARY KEY,
     recipe_id INT NOT NULL,
@@ -38,8 +40,42 @@ CREATE TABLE preparation_steps (
     FOREIGN KEY (recipe_id) REFERENCES recipes (id) ON DELETE CASCADE
 ); 
 
--- france 
--- (Ratatouille)
+-- User Authentication Tables
+CREATE TABLE user (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    fullname VARCHAR(100) NOT NULL,
+    email VARCHAR(120) UNIQUE NOT NULL,
+    password_hash VARCHAR(200) NOT NULL,
+    is_active BOOLEAN DEFAULT TRUE,
+    is_verified BOOLEAN DEFAULT FALSE,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    last_login DATETIME
+);
+
+CREATE TABLE login_attempt (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(120) NOT NULL,
+    ip_address VARCHAR(45) NOT NULL,
+    success BOOLEAN DEFAULT FALSE,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE password_reset (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    token VARCHAR(100) UNIQUE NOT NULL,
+    expires_at DATETIME NOT NULL,
+    used BOOLEAN DEFAULT FALSE,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES user(id)
+);
+
+-- =============================================
+-- Sample Recipe Data
+-- =============================================
+
+-- French Recipes
+-- Ratatouille
 INSERT INTO recipes (name, category, country, time, difficulty, description, image, calories, proteins, carbs, fats)
 VALUES ('Ratatouille', 'Lunch', 'France', 60, 'Medium', 
 'A Mediterranean vegetable stew simmered with olive oil and Provencal herbs.',
@@ -60,7 +96,7 @@ INSERT INTO preparation_steps (recipe_id, step_number, etape) VALUES
 (@recipe_id, 4, 'Season with herbs, salt, and pepper.'),
 (@recipe_id, 5, 'Simmer covered for 40 minutes.');
 
--- (Boeuf Bourguignon)
+-- Boeuf Bourguignon
 INSERT INTO recipes (name, category, country, time, difficulty, description, image, calories, proteins, carbs, fats)
 VALUES ('Boeuf Bourguignon', 'Lunch', 'France', 180, 'Medium',
  'Classic French beef stew cooked in red wine', 'uploads/Boeuf_Bourguignon.jpg', 550, 40, 30, 28);
@@ -80,7 +116,7 @@ INSERT INTO preparation_steps (recipe_id, step_number, etape) VALUES
 (@recipe_id, 4, 'Deglaze pan with marinade liquid and add bouquet garni'),
 (@recipe_id, 5, 'Simmer covered in oven at 160°C for 3 hours');
 
---(Chocolate Éclair)
+-- Chocolate Éclair
 INSERT INTO recipes (name, category, country, time, difficulty, description, image, calories, proteins, carbs, fats)
 VALUES ('Chocolate Éclair', 'Desserts', 'France', 120, 'hard',
  'Choux pastry filled with cream and topped with chocolate glaze', 'uploads/eclair.jpg', 400, 8, 50, 20);
@@ -99,8 +135,8 @@ INSERT INTO preparation_steps (recipe_id, step_number, etape) VALUES
 (@recipe_id, 4, 'Pipe onto baking sheet and bake until golden'),
 (@recipe_id, 5, 'Fill with cream and glaze with melted chocolate');
 
--- maroc
--- (Harira)
+-- Moroccan Recipes
+-- Harira Soup
 INSERT INTO recipes (name, category, country, time, difficulty, description, image, calories, proteins, carbs, fats)
 VALUES ('Harira Soup', 'Lunch', 'Morocco', 60, 'medium', 
 'A traditional Moroccan soup with lentils, chickpeas and aromatic spices, often served during Ramadan.',
@@ -127,9 +163,9 @@ INSERT INTO preparation_steps (recipe_id, step_number, etape) VALUES
 (@recipe_id, 6, 'Stir in chopped cilantro and parsley before serving.'),
 (@recipe_id, 7, 'Serve with lemon wedges and crusty bread.');
 
---(shebakiya)
+-- Chebakia
 INSERT INTO recipes (name, category, country, time, difficulty, description, image, calories, proteins, carbs, fats)
- VALUES ('Chebakia', 'Dessert', 'Morocco', 150, 'hard',
+VALUES ('Chebakia', 'Dessert', 'Morocco', 150, 'hard',
 'Sesame-coated rose-shaped cookies with honey', 'uploads/chebakia.png', 320, 5, 45, 12);
 SET @recipe_id := LAST_INSERT_ID();
 INSERT INTO ingredients (recipe_id, quantity, unit, ingredient_name) VALUES
@@ -146,7 +182,7 @@ INSERT INTO preparation_steps (recipe_id, step_number, etape) VALUES
 (@recipe_id, 4, 'Dip in warm honey syrup'),
 (@recipe_id, 5, 'Sprinkle with sesame seeds and let cool');
 
--- (tajine)
+-- Chicken Tagine
 INSERT INTO recipes (name, category, country, time, difficulty, description, image, calories, proteins, carbs, fats) VALUES
 ('Chicken Tagine with Olives and Lemon', 'Lunch', 'Morocco', 90, 'Medium',
  'Classic Moroccan chicken dish with preserved lemons and green olives', 'uploads/tagine.jpg', 450, 35, 20, 25);
@@ -167,10 +203,8 @@ INSERT INTO preparation_steps (recipe_id, step_number, etape) VALUES
 (@recipe_id, 4, 'Add olives and preserved lemon.'),
 (@recipe_id, 5, 'Cover and simmer for 45 minutes until chicken is tender.');
 
-
-
--- japon
--- (Matcha Mochi)
+-- Japanese Recipes
+-- Matcha Mochi
 INSERT INTO recipes (name, category, country, time, difficulty, description, image, calories, proteins, carbs, fats)
 VALUES ('Matcha Mochi', 'Desserts', 'Japon', 60, 'Medium',
  'Sweet rice cake flavored with matcha green tea powder', 'uploads/mochi.jpg', 200, 4, 40, 1);
@@ -188,7 +222,7 @@ INSERT INTO preparation_steps (recipe_id, step_number, etape) VALUES
 (@recipe_id, 4, 'Dust a surface with cornstarch and transfer the mochi.'),
 (@recipe_id, 5, 'Knead gently and shape into small balls or discs.');
 
---(Tonkatsu Ramen)
+-- Tonkatsu Ramen
 INSERT INTO recipes (name, category, country, time, difficulty, description, image, calories, proteins, carbs, fats)
 VALUES ('Tonkatsu Ramen', 'Anime', 'Japon', 120, 'hard',
  'Japanese noodle soup with pork cutlet and rich broth', 'uploads/tonkatsu.jpg', 600, 35, 70, 20);
@@ -210,7 +244,6 @@ INSERT INTO ingredients (recipe_id, quantity, unit, ingredient_name) VALUES
 (@recipe_id, 1, 'cup', 'Bean sprouts'),
 (@recipe_id, 4, 'tbsp', 'Tonkatsu sauce'),
 (@recipe_id, 1, 'tsp', 'Chili oil (optional)');
-
 INSERT INTO preparation_steps (recipe_id, step_number, etape) VALUES
 (@recipe_id, 1, 'Make broth: Boil pork bones 10min, discard water. Add 2L fresh water, simmer 8 hours with garlic, ginger and kombu'),
 (@recipe_id, 2, 'Prepare chashu pork: Roll pork belly, brown in pan. Braise in soy sauce, mirin and water for 2 hours'),
@@ -219,3 +252,64 @@ INSERT INTO preparation_steps (recipe_id, step_number, etape) VALUES
 (@recipe_id, 5, 'Assemble bowls: Add 60ml tare to each bowl, pour hot broth. Add noodles and arrange toppings'),
 (@recipe_id, 6, 'Fry tonkatsu: Bread pork cutlet with panko, deep-fry at 180°C until golden'),
 (@recipe_id, 7, 'Garnish with soft-boiled egg, nori, bamboo shoots, bean sprouts and chili oil');
+
+-- =============================================
+-- Database Management Queries
+-- =============================================
+
+-- User Management Queries
+-- View all users
+SELECT 
+    id,
+    fullname,
+    email,
+    is_active,
+    is_verified,
+    created_at
+FROM user;
+
+-- View only active users
+SELECT 
+    id,
+    fullname,
+    email,
+    created_at
+FROM user
+WHERE is_active = 1;
+
+-- View recent login attempts
+SELECT 
+    email,
+    ip_address,
+    success,
+    created_at
+FROM login_attempt
+ORDER BY created_at DESC
+LIMIT 10;
+
+-- View password reset requests
+SELECT 
+    user_id,
+    used,
+    created_at,
+    expires_at
+FROM password_reset
+ORDER BY created_at DESC;
+
+-- Maintenance Queries
+-- Delete login attempts older than 30 days
+DELETE FROM login_attempt
+WHERE created_at < DATE_SUB(NOW(), INTERVAL 30 DAY);
+
+-- Delete used password reset tokens older than 7 days
+DELETE FROM password_reset
+WHERE used = 1 
+AND created_at < DATE_SUB(NOW(), INTERVAL 7 DAY);
+
+-- User Statistics
+SELECT 
+    COUNT(*) as total_users,
+    SUM(CASE WHEN is_active = 1 THEN 1 ELSE 0 END) as active_users,
+    SUM(CASE WHEN is_verified = 1 THEN 1 ELSE 0 END) as verified_users,
+    SUM(CASE WHEN created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY) THEN 1 ELSE 0 END) as recent_users
+FROM user; 
