@@ -2,15 +2,10 @@ from flask import Flask, request, render_template, redirect, url_for
 import mysql.connector
 import os
 from werkzeug.utils import secure_filename
-from jinja2 import ChoiceLoader, FileSystemLoader
+
 
 app = Flask(__name__)
 
-# Configuration des dossiers de templates
-app.jinja_loader = ChoiceLoader([
-    app.jinja_loader,  # Le chargeur par défaut (templates/)
-    FileSystemLoader(os.path.join(os.path.dirname(os.path.abspath(__file__)), ''))  # Dossier racine du projet
-])
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
 
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
