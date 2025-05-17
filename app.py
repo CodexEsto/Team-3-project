@@ -309,6 +309,10 @@ def add_recipe_form():
 def world_cuisine():
     return render_template('WORLD.html')
 
+@app.route('/categories')
+def categories():
+    return render_template('category.html')
+
 @app.route('/addrecipe/submit', methods=['POST'])
 @login_required
 def submit_recipe():
