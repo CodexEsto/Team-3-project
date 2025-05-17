@@ -1,5 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,300..700&display=swap");
-  
+
+
 h1 {
     color: #ff6500;
     text-align: center;
@@ -14,8 +15,17 @@ h1 {
     text-align: center;
 }
 .header {
+    position: relative;
+    top: 40px;
+    
    padding: 30px;
     background: linear-gradient(to right, #ff66009f,#f9c74f );    
+}
+main{
+        position: relative;
+    top: 40px;
+    
+   padding: 30px;
 }
 * {
     padding:
@@ -23,7 +33,7 @@ h1 {
     margin:
   0;
   }
-input,button{
+input{
   font: inherit;/*KATAWRAT FONT*/
 
 }
@@ -39,45 +49,6 @@ border: #ffffff;
 border-radius: 20px;
 padding:.70rem ;
 outline: none;
-}
-.box button{
-    all: unset;
-    position: absolute;
-     right:  430px;
-    top: 6px;
-    color:#ff6500 ;
-    font-size: 1.5rem;
-    cursor: pointer;
-
-}
-.box button:hover{
-    color: #ffcc25;
-    transform: scale(1.2);
-    transition: all 0.3s ease-in-out;
-   
-}
-.main-nav {
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
-    letter-spacing: .1rem;
-}
-.main-nav a {
-    color: #ffff;
-    text-decoration: none;
-    margin: 0 15px;
-    padding: 8px 15px;
-    border-radius: 30px;
-    font-weight: bold;
-    transition: all 0.3s;
-}
-.main-nav a:hover {
-    background-color: rgba(255, 255, 255, 0.2);
-}
-.main-nav a.active {
-    background-color: white;
-    color: #ff6500;
-    text-shadow: 1px 1px 2px rgba(18, 18, 19, 0.562);
 }
 h2 {
     text-align: center;
