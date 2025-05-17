@@ -194,49 +194,62 @@ def index():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    if current_user.is_authenticated:
-        return redirect(url_for('index'))
-        
-    form = {
-        'email': request.form.get('email', '')
-    }
-    
-    if request.method == 'POST':
-        email = request.form.get('email')
-        password = request.form.get('password')
-        ip_address = get_client_ip(request)
-        
-        if LoginAttempt.check_attempts(email, ip_address):
-            flash('Too many failed attempts. Please try again later.', 'error')
-            return render_template('login.html', form=form)
+    try:
+        if current_user.is_authenticated:
+            return redirect(url_for('index'))
             
-        is_valid, message = validate_email(email)
-        if not is_valid:
-            flash(message, 'error')
-            return render_template('login.html', form=form)
-            
-        user = User.query.filter_by(email=email).first()
-        attempt = LoginAttempt(email=email, ip_address=ip_address)
+        form = {
+            'email': request.form.get('email', '')
+        }
         
-        if user and user.check_password(password):
-            if not user.is_active:
-                flash('Your account has been deactivated. Please contact support.', 'error')
+        if request.method == 'POST':
+            email = request.form.get('email')
+            password = request.form.get('password')
+            ip_address = get_client_ip(request)
+            
+            # Validate email
+            is_valid, message = validate_email(email)
+            if not is_valid:
+                flash(message, 'error')
+                return render_template('login.html', form=form)
+            
+            try:
+                # Check login attempts
+                if LoginAttempt.check_attempts(email, ip_address):
+                    flash('Too many failed attempts. Please try again later.', 'error')
+                    return render_template('login.html', form=form)
+                
+                # Find user
+                user = User.query.filter_by(email=email).first()
+                attempt = LoginAttempt(email=email, ip_address=ip_address)
+                
+                if user and user.check_password(password):
+                    if not user.is_active:
+                        flash('Your account has been deactivated. Please contact support.', 'error')
+                        return render_template('login.html', form=form)
+                    
+                    attempt.success = True
+                    db.session.add(attempt)
+                    user.update_last_login()
+                    login_user(user)
+                    
+                    next_page = request.args.get('next')
+                    return redirect(next_page or url_for('index'))
+                
+                db.session.add(attempt)
+                db.session.commit()
+                flash('Invalid email or password.', 'error')
+                return render_template('login.html', form=form)
+            except Exception as e:
+                logger.error(f"Database error during login: {str(e)}")
+                flash('An error occurred. Please try again.', 'error')
                 return render_template('login.html', form=form)
                 
-            attempt.success = True
-            db.session.add(attempt)
-            user.update_last_login()
-            login_user(user)
-            
-            next_page = request.args.get('next')
-            return redirect(next_page or url_for('index'))
-        
-        db.session.add(attempt)
-        db.session.commit()
-        flash('Invalid email or password.', 'error')
         return render_template('login.html', form=form)
-        
-    return render_template('login.html', form=form)
+    except Exception as e:
+        logger.error(f"Unexpected error in login route: {str(e)}")
+        flash('An unexpected error occurred. Please try again.', 'error')
+        return render_template('login.html', form={'email': ''})
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
@@ -299,11 +312,124 @@ def logout():
     logout_user()
     return redirect(url_for('login'))
 
+def generate_reset_token():
+    return serializer.dumps(str(datetime.utcnow().timestamp()))
+
+def send_password_reset_email(user, token):
+    reset_url = url_for('reset_password', token=token, _external=True)
+    try:
+        msg = Message('Password Reset Request',
+                    sender=app.config['MAIL_DEFAULT_SENDER'],
+                    recipients=[user.email])
+        msg.body = f"""To reset your password, visit the following link:
+
+{reset_url}
+
+If you did not make this request, simply ignore this email and no changes will be made.
+
+This link will expire in 30 minutes.
+"""
+        mail.send(msg)
+        return True
+    except Exception as e:
+        logger.error(f"Error sending password reset email: {str(e)}")
+        return False
+
+@app.route('/forgot-password', methods=['GET', 'POST'])
+def forgot_password():
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+        
+    if request.method == 'POST':
+        email = request.form.get('email')
+        user = User.query.filter_by(email=email).first()
+        
+        if user:
+            try:
+                # Generate token
+                token = generate_reset_token()
+                
+                # Save reset token
+                reset_record = PasswordReset(
+                    user_id=user.id,
+                    token=token,
+                    expires_at=datetime.utcnow() + timedelta(minutes=30)
+                )
+                db.session.add(reset_record)
+                db.session.commit()
+                
+                # Send email
+                if send_password_reset_email(user, token):
+                    flash('Password reset instructions have been sent to your email.', 'success')
+                else:
+                    db.session.delete(reset_record)
+                    db.session.commit()
+                    flash('Error sending reset email. Please try again.', 'error')
+            except Exception as e:
+                logger.error(f"Error in forgot password: {str(e)}")
+                db.session.rollback()
+                flash('An error occurred. Please try again.', 'error')
+        else:
+            # For security, don't reveal if email exists
+            flash('Password reset instructions have been sent if the email exists.', 'success')
+            
+        return redirect(url_for('login'))
+        
+    return render_template('forgot_password.html')
+
+@app.route('/reset-password/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+        
+    # Verify token
+    reset_record = PasswordReset.query.filter_by(
+        token=token,
+        used=False
+    ).filter(PasswordReset.expires_at > datetime.utcnow()).first()
+    
+    if not reset_record:
+        flash('Invalid or expired reset link.', 'error')
+        return redirect(url_for('login'))
+        
+    if request.method == 'POST':
+        password = request.form.get('password')
+        confirm_password = request.form.get('confirm_password')
+        
+        if password != confirm_password:
+            flash('Passwords do not match.', 'error')
+            return render_template('reset_password.html')
+            
+        is_valid, message = User.validate_password(password)
+        if not is_valid:
+            flash(message, 'error')
+            return render_template('reset_password.html')
+            
+        try:
+            # Update password
+            user = User.query.get(reset_record.user_id)
+            user.set_password(password)
+            
+            # Mark token as used
+            reset_record.used = True
+            
+            db.session.commit()
+            flash('Your password has been updated! Please log in.', 'success')
+            return redirect(url_for('login'))
+        except Exception as e:
+            logger.error(f"Error resetting password: {str(e)}")
+            db.session.rollback()
+            flash('An error occurred. Please try again.', 'error')
+            return render_template('reset_password.html')
+            
+    return render_template('reset_password.html')
+
 # Routes - Recipe Management
 @app.route('/add-recipe')
 @login_required
 def add_recipe_form():
     return render_template('add-recipe.html')
+
 
 @app.route('/world-cuisine')
 def world_cuisine():
@@ -412,9 +538,99 @@ def country_recipes(country_name):
     
     return render_template('country_recipes.html', country=country_name, recipes=recipes)
 
+@app.route('/profile')
+@login_required
+def profile():
+    # Get user's recipes
+    conn = mysql.connector.connect(**db_config)
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT * FROM recipes WHERE user_id = %s ORDER BY id DESC", (current_user.id,))
+    user_recipes = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return render_template('profile.html', user=current_user, recipes=user_recipes)
+
+@app.route('/contact', methods=['GET', 'POST'])
+def contact():
+    if request.method == 'POST':
+        name = request.form.get('name')
+        email = request.form.get('email')
+        phone = request.form.get('phone', '')  # Added phone field
+        subject = request.form.get('subject', '')  # Added subject field
+        message = request.form.get('message')
+        
+        # Send email
+        try:
+            msg = Message(f'New Contact Form: {subject}',
+                        sender=app.config['MAIL_DEFAULT_SENDER'],
+                        recipients=[app.config['ADMIN_EMAIL']])
+            msg.body = f"""
+            Name: {name}
+            Email: {email}
+            Phone: {phone}
+            Subject: {subject}
+            Message: {message}
+            """
+            mail.send(msg)
+            flash('Thank you for your message! We will get back to you soon.', 'success')
+        except Exception as e:
+            logger.error(f"Error sending contact email: {str(e)}")
+            flash('Sorry, there was an error sending your message. Please try again later.', 'error')
+        
+        return redirect(url_for('contact'))
+    return render_template('contactus.html')
+
+
+@app.route('/search')
+def search_recipes():
+    query = request.args.get('q', '')
+    if not query:
+        return redirect(url_for('index'))
+    
+    conn = mysql.connector.connect(**db_config)
+    cursor = conn.cursor(dictionary=True)
+    
+    # Search in recipe names and descriptions
+    search_term = f"%{query}%"
+    cursor.execute("""
+        SELECT * FROM recipes 
+        WHERE name LIKE %s 
+        OR description LIKE %s 
+        OR category LIKE %s
+        OR country LIKE %s
+    """, (search_term, search_term, search_term, search_term))
+    
+    recipes = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    
+    return render_template('search_results.html', recipes=recipes, query=query)
+
 # Database initialization
-with app.app_context():
-    db.create_all()
+def init_db():
+    try:
+        with app.app_context():
+            # Create all tables
+            db.create_all()
+            logger.info("Database tables created successfully")
+            
+            # Check if admin user exists
+            admin = User.query.filter_by(email='admin@example.com').first()
+            if not admin:
+                # Create admin user
+                admin = User(
+                    fullname='Admin User',
+                    email='admin@example.com',
+                    is_active=True,
+                    is_verified=True
+                )
+                admin.set_password('Admin@123')
+                db.session.add(admin)
+                db.session.commit()
+                logger.info("Admin user created successfully")
+    except Exception as e:
+        logger.error(f"Error initializing database: {str(e)}")
 
 if __name__ == '__main__':
+    init_db()  # Initialize database before running the app
     app.run(debug=app.config['FLASK_DEBUG'])

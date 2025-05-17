@@ -6,50 +6,96 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <title>Login - APP</title>
+    <title>Login - Recipe World</title>
 </head>
 <body>
+    <!-- Navigation -->
+    <nav>
+        <div class="logo">
+            <a href="{{ url_for('index') }}" class="back-btn">
+                <i class="fas fa-arrow-left"></i> Back to Home
+            </a>
+        </div>
+    </nav>
+
     <img src="{{ url_for('static', filename='img/background.jpg') }}" class="background">
-    <div class="split-container">
-        <!-- Logo Section -->
-        <div class="logo-section">
-            <img src="{{ url_for('static', filename='img/logo-01.png') }}" alt="Logo" class="big-logo">
-            <h1 class="welcome-text">Welcome to Our App</h1>
-            <p class="tagline">Your trusted platform for amazing experiences</p>
-        </div>
+    <main class="login-container">
+        <div class="split-container">
+            <!-- Logo Section -->
+            <div class="logo-section">
+                <img src="{{ url_for('static', filename='img/logo-01.png') }}" alt="Logo" class="big-logo">
+                <h1 class="welcome-text">Welcome to Recipe World</h1>
+                <p class="tagline">Your trusted platform for amazing recipes</p>
+            </div>
 
-        <!-- Login Form Section -->
-        <div class="form-section">
-            <div class="login-box">
-                <h2>Welcome Back!</h2>
-                <form method="POST" action="{{ url_for('login') }}">
-                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                    <div class="input-group">
-                        <input type="email" name="email" placeholder="Email Address" value="{{ form.email }}" required>
-                    </div>
-                    <div class="input-group">
-                        <input type="password" name="password" placeholder="Password" required>
-                    </div>
-                    <button type="submit" class="login-btn">Log in</button>
-                    <div class="links">
-                        <a href="{{ url_for('forgot_password') }}" class="forgot">Forgot Password?</a>
-                        <div class="signup">
-                            New User? <a href="{{ url_for('signup') }}" class="page-link">Sign up</a>
+            <!-- Login Form Section -->
+            <div class="form-section">
+                <div class="login-box">
+                    <h2>Welcome Back!</h2>
+                    <form method="POST" action="{{ url_for('login') }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <div class="input-group">
+                            <input type="email" name="email" placeholder="Email Address" value="{{ form.get('email', '') }}" required>
                         </div>
-                    </div>
-                </form>
+                        <div class="input-group">
+                            <input type="password" name="password" placeholder="Password" required>
+                        </div>
+                        <button type="submit" class="login-btn">Log in</button>
+                        <div class="links">
+                            <div class="signup">
+                                New User? <a href="{{ url_for('signup') }}" class="page-link">Sign up</a>
+                            </div>
+                            <div class="forgot-password">
+                                <a href="{{ url_for('forgot_password') }}" class="page-link">Forgot Password?</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        <div class="flash-messages">
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ category }}">{{ message }}</div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endwith %}
             </div>
         </div>
-    </div>
+    </main>
 
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            <div class="flash-messages">
-                {% for category, message in messages %}
-                    <div class="alert alert-{{ category }}">{{ message }}</div>
-                {% endfor %}
-            </div>
-        {% endif %}
-    {% endwith %}
+    <!-- Footer -->
+<!-- footer -->
+<footer>
+    <div class="footer-content">
+      <div class="footer-logo">
+        <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo"/>
+      </div>
+      <div class="footer-section">
+        <h2>Quick Links</h2>
+        <br class="footer-links">
+          <a href="#about">About Us</a></br>
+          <a href="#category">Categories</a></br>
+          <a href="#world-cuisine">World Cuisine</a></br>
+          <a href="{{ url_for('contact') }}">Contact Us</a>
+        </div>
+      </div>
+      <div class="footer-section">
+        <h2>Connect With Us</h2>
+        <div class="social-links">
+          <a href="#" class="social-icon">Facebook</a></br>
+          <a href="#" class="social-icon">Instagram</a></br>
+          <a href="#" class="social-icon">Youtube</a></br>
+          <a href="#" class="social-icon">Pinterest</a>
+        </div>
+      </div>
+    </div>
+    <div class="ligne"></div>
+    <div class="footer-bottom">
+      <p>&copy; 2025 site. All Rights Reserved.</p>
+    </div>
+  </footer>
+  <!--end footer-->
 </body>
 </html>

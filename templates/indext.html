@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css')}}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/global.css')}}">
-  <title>Document</title>
+  <title>Recipe World - Home</title>
 </head>
 
 <body>
@@ -16,14 +16,21 @@
       <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo" />
     </div>
     <ul>
-      <li><a href="/">Home</a></li>
+      <li><a href="{{ url_for('index') }}">Home</a></li>
       <li><a href="#about">About-us</a></li>
-      <li><a href="#category">Category </a></li>
+      <li><a href="#category">Category</a></li>
       <li><a href="#world-cuisine">World Cuisine</a></li>
-      <li><a href="">Contact us</a></li>
-
+      <li><a href="{{ url_for('contact') }}">Contact us</a></li>
     </ul>
-    <a class="Profile" href="">Profile</a>
+    <div class="auth-buttons">
+      {% if current_user.is_authenticated %}
+        <a class="Profile" href="{{ url_for('profile') }}">Profile</a>
+        <a class="auth-link" href="{{ url_for('logout') }}">Logout</a>
+      {% else %}
+        <a class="auth-link" href="{{ url_for('login') }}">Login</a>
+        <a class="auth-link" href="{{ url_for('signup') }}">Sign Up</a>
+      {% endif %}
+    </div>
   </nav>
   <!--end nav-->
   <!-- header -->
@@ -36,13 +43,15 @@
           journey!</span>
       </p>
       <div class="btn">
-        <form action="">
-          <a href="{{ url_for('add_recipe_form') }}"> <button type="button">Your recipes</button></a>
-        </form>
+        {% if current_user.is_authenticated %}
+          <a href="{{ url_for('add_recipe_form') }}"><button type="button">Add Your Recipe</button></a>
+        {% else %}
+          <a href="{{ url_for('login') }}"><button type="button">Login to Add Recipe</button></a>
+        {% endif %}
       </div>
       <div class="search">
-        <form action="">
-          <input type="text" placeholder="Search for recipes" />
+        <form action="{{ url_for('search_recipes') }}" method="GET">
+          <input type="text" name="q" placeholder="Search for recipes" required />
           <button type="submit">Search</button>
         </form>
       </div>
@@ -58,35 +67,35 @@
       <div class="items">
         <div class="items-left">
           <div class="item">
-            <a href=""><img src="{{ url_for('static', filename='img/home/food1.jpg') }}" alt="" /><span>Lunch</span></a>
+            <a href="{{ url_for('search_recipes', q='Lunch') }}"><img src="{{ url_for('static', filename='img/home/food1.jpg') }}" alt="Lunch" /><span>Lunch</span></a>
           </div>
 
           <div class="item2">
-            <a href=""><img src="{{ url_for('static', filename='img/home/food2.jpg') }}" alt="" /><span>Quick & Easy Recipes</span></a>
+            <a href="{{ url_for('search_recipes', q='Quick & Easy') }}"><img src="{{ url_for('static', filename='img/home/food2.jpg') }}" alt="Quick & Easy Recipes" /><span>Quick & Easy Recipes</span></a>
           </div>
         </div>
 
         <div class="items-center">
           <div class="item">
-            <a href=""><img src="{{ url_for('static', filename='img/home/food3.jpg') }}" alt="" /><span>For GYM</span></a>
+            <a href="{{ url_for('search_recipes', q='Gym') }}"><img src="{{ url_for('static', filename='img/home/food3.jpg') }}" alt="For GYM" /><span>For GYM</span></a>
           </div>
 
           <div class="item2">
-            <a href=""><img src="{{ url_for('static', filename='img/home/food4.jpg') }}" alt="" /><span>Desserts</span></a>
+            <a href="{{ url_for('search_recipes', q='Desserts') }}"><img src="{{ url_for('static', filename='img/home/food4.jpg') }}" alt="Desserts" /><span>Desserts</span></a>
           </div>
         </div>
 
         <div class="items-right">
           <div class="item">
-            <a href=""><img src="{{ url_for('static', filename='img/home/food5.jpg') }}" alt="" /><span>Vegetarian</span></a>
+            <a href="{{ url_for('search_recipes', q='Vegetarian') }}"><img src="{{ url_for('static', filename='img/home/food5.jpg') }}" alt="Vegetarian" /><span>Vegetarian</span></a>
           </div>
           <div class="item2">
-            <a href=""><img src="{{ url_for('static', filename='img/home/food6.jpg') }}" alt="" /><span>Jus</span></a>
+            <a href="{{ url_for('search_recipes', q='Juice') }}"><img src="{{ url_for('static', filename='img/home/food6.jpg') }}" alt="Juice" /><span>Juice</span></a>
           </div>
         </div>
       </div>
       <div class="more-categories">
-        <a href="" class="view-more">View More Categories</a>
+        <a href="{{ url_for('search_recipes') }}" class="view-more">View More Categories</a>
       </div>
     </div>
     <!--end category-->
@@ -96,20 +105,19 @@
       <p class="idee">Embark on a culinary journey across the globe</p>
       <div class="world-cuisine-grid">
         <div class="cuisine-card">
-          <a href="/country/Morocco">
+          <a href="{{ url_for('country_recipes', country_name='Morocco') }}">
             <img src="{{ url_for('static', filename='img/home/contri1.png') }}" alt="Moroccan Cuisine" />
             <div class="cuisine-info">
               <h3>Morocco</h3>
-              <p>
-                Dive into the rich spices and vibrant flavors of Moroccan cuisine.
+              <br>
+                Dive into the rich spices and vibrant flavors <br> of Moroccan cuisine.
               </p>
               <div class="learn-more">Learn More</div>
             </div>
           </a>
-
         </div>
         <div class="cuisine-card">
-          <a href="/country/France">
+          <a href="{{ url_for('country_recipes', country_name='France') }}">
             <img src="{{ url_for('static', filename='img/home/contri2.png') }}" alt="French Cuisine" />
             <div class="cuisine-info">
               <h3>France</h3>
@@ -119,10 +127,9 @@
               <div class="learn-more">Learn More</div>
             </div>
           </a>
-
         </div>
         <div class="cuisine-card">
-          <a href="/country/Canada">
+          <a href="{{ url_for('country_recipes', country_name='Canada') }}">
             <img src="{{ url_for('static', filename='img/home/contri3.png') }}" alt="Canadian Cuisine" />
             <div class="cuisine-info">
               <h3>Canada</h3>
@@ -149,21 +156,21 @@
       </div>
       <div class="footer-section">
         <h2>Quick Links</h2>
-        
-          <a href="#about">About Us</a>
-          <a href="#category">Categories</a>
-          <a href="#world-cuisine">World Cuisine</a>
-          <a href="">Contact Us</a>
-        
+        <br class="footer-links">
+          <a href="#about">About Us</a><br>
+          <a href="#category">Categories</a><br>
+          <a href="#world-cuisine">World Cuisine</a></br>
+          <a href="{{ url_for('contact') }}">Contact Us</a>
+        </div>
       </div>
       <div class="footer-section">
         <h2>Connect With Us</h2>
-        
-          <a href="#" class="social-icon">Facebook</a>
-          <a href="#" class="social-icon">Instagram</a>
-          <a href="#" class="social-icon">Youtube</a>
+        <div class="social-links">
+          <a href="#" class="social-icon">Facebook</a></br>
+          <a href="#" class="social-icon">Instagram</a></br>
+          <a href="#" class="social-icon">Youtube</a></br>
           <a href="#" class="social-icon">Pinterest</a>
-        
+        </div>
       </div>
     </div>
     <div class="ligne"></div>
