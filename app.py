@@ -29,7 +29,8 @@ app.jinja_loader = ChoiceLoader([
 # Configuration
 class Config:
     SECRET_KEY = os.getenv('FLASK_SECRET_KEY', 'your-secret-key-here')
-    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', 'sqlite:///app.db')
+    # Update database URI to use MySQL
+    SQLALCHEMY_DATABASE_URI = 'mysql://root:123456789@localhost/recipe_db'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     
     # Upload Configuration for Recipes
@@ -46,7 +47,7 @@ class Config:
     MAIL_DEFAULT_SENDER = 'salmabbdll6@gmail.com'
     ADMIN_EMAIL = 'salmabbdll6@gmail.com'
     
-    FLASK_DEBUG = os.getenv('FLASK_DEBUG', True)
+    FLASK_DEBUG = True
     WTF_CSRF_SECRET_KEY = os.getenv('CSRF_SECRET_KEY', 'your-csrf-secret-key')
 
 app.config.from_object(Config)
@@ -98,6 +99,9 @@ class User(UserMixin, db.Model):
     is_verified = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     last_login = db.Column(db.DateTime)
+    
+    # Relationships
+    recipes = db.relationship('Recipe', backref='author', lazy=True)
     
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -152,6 +156,45 @@ class LoginAttempt(db.Model):
             cls.created_at >= cutoff
         ).count()
         return attempts >= max_attempts
+
+class Recipe(db.Model):
+    __tablename__ = 'recipes'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(200), nullable=False)
+    category = db.Column(db.String(100))
+    country = db.Column(db.String(100))
+    time = db.Column(db.String(50))
+    difficulty = db.Column(db.String(50))
+    description = db.Column(db.Text)
+    image = db.Column(db.String(255))
+    calories = db.Column(db.Integer)
+    proteins = db.Column(db.Integer)
+    carbs = db.Column(db.Integer)
+    fats = db.Column(db.Integer)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # Relationships
+    ingredients = db.relationship('Ingredient', backref='recipe', lazy=True, cascade="all, delete-orphan")
+    preparation_steps = db.relationship('PreparationStep', backref='recipe', lazy=True, cascade="all, delete-orphan")
+
+class Ingredient(db.Model):
+    __tablename__ = 'ingredients'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    recipe_id = db.Column(db.Integer, db.ForeignKey('recipes.id'), nullable=False)
+    quantity = db.Column(db.String(50))
+    unit = db.Column(db.String(50))
+    ingredient_name = db.Column(db.String(200), nullable=False)
+
+class PreparationStep(db.Model):
+    __tablename__ = 'preparation_steps'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    recipe_id = db.Column(db.Integer, db.ForeignKey('recipes.id'), nullable=False)
+    step_number = db.Column(db.Integer, nullable=False)
+    etape = db.Column(db.Text, nullable=False)
 
 # Utility functions
 def validate_email(email):
@@ -310,7 +353,8 @@ def signup():
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for('login'))
+    flash('You have been logged out successfully.', 'success')
+    return redirect(url_for('index'))
 
 def generate_reset_token():
     return serializer.dumps(str(datetime.utcnow().timestamp()))
@@ -435,94 +479,95 @@ def add_recipe_form():
 def world_cuisine():
     return render_template('WORLD.html')
 
+@app.route('/categories')
+def categories():
+    return render_template('category.html')
+
 @app.route('/addrecipe/submit', methods=['POST'])
 @login_required
 def submit_recipe():
     if request.method == 'POST':
-        # les données principales
-        name = request.form['name']
-        category = request.form['category']
-        country = request.form.get('country', '')
-        time = request.form['time']
-        difficulty = request.form['difficulty']
-        description = request.form.get('description', '')
-        calories = int(request.form.get('calories')) if request.form.get('calories') else None
-        proteins = int(request.form.get('proteins')) if request.form.get('proteins') else None
-        carbs = int(request.form.get('carbs')) if request.form.get('carbs') else None
-        fats = int(request.form.get('fats')) if request.form.get('fats') else None
-        
-        # image
-        image = request.files['image']
-        if image:
-            filename = secure_filename(image.filename)
-            image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            image.save(image_path)
-            db_image_path = 'uploads/' + filename
-           
-        conn = mysql.connector.connect(**db_config)
-        cursor = conn.cursor()
-        
-        # recette
-        insert_recipe = """
-        INSERT INTO recipes 
-        (name, category, country, time, difficulty, description, image, calories, proteins, carbs, fats)
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-        """
-        recipe_data = (name, category, country, time, difficulty, description, db_image_path, calories, proteins, carbs, fats)
-        cursor.execute(insert_recipe, recipe_data)
-        recipe_id = cursor.lastrowid  
-        
-        # ingrédients
-        quantities = request.form.getlist('quantity[]')
-        units = request.form.getlist('unit[]')
-        ingredient_names = request.form.getlist('ingredient_name[]')
-        
-        for i in range(len(ingredient_names)):
-            if ingredient_names[i]:  
-                insert_ingredient = """
-                INSERT INTO ingredients (recipe_id, quantity, unit, ingredient_name)
-                VALUES (%s, %s, %s, %s)
-                """
-                ingredient_data = (recipe_id, quantities[i], units[i], ingredient_names[i])
-                cursor.execute(insert_ingredient, ingredient_data)
-        
-        # préparation
-        prep_steps = request.form.getlist('preparation_step[]')
-        for i, step in enumerate(prep_steps, 1):
-            if step:  
-                insert_step = """
-                INSERT INTO preparation_steps (recipe_id, step_number, etape)
-                VALUES (%s, %s, %s)
-                """
-                preparation_data = (recipe_id, i, step)
-                cursor.execute(insert_step, preparation_data)
-        
-        conn.commit()
-        cursor.close()
-        conn.close()
-        return redirect(url_for('view_recipe', recipe_id=recipe_id))
+        try:
+            # Get recipe data
+            name = request.form['name']
+            category = request.form['category']
+            country = request.form.get('country', '')
+            time = request.form['time']
+            difficulty = request.form['difficulty']
+            description = request.form.get('description', '')
+            calories = int(request.form.get('calories')) if request.form.get('calories') else None
+            proteins = int(request.form.get('proteins')) if request.form.get('proteins') else None
+            carbs = int(request.form.get('carbs')) if request.form.get('carbs') else None
+            fats = int(request.form.get('fats')) if request.form.get('fats') else None
+            
+            # Handle image upload
+            image = request.files['image']
+            db_image_path = None
+            if image:
+                filename = secure_filename(image.filename)
+                image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                image.save(image_path)
+                db_image_path = 'uploads/' + filename
+            
+            # Create recipe
+            recipe = Recipe(
+                name=name,
+                category=category,
+                country=country,
+                time=time,
+                difficulty=difficulty,
+                description=description,
+                image=db_image_path,
+                calories=calories,
+                proteins=proteins,
+                carbs=carbs,
+                fats=fats,
+                user_id=current_user.id
+            )
+            
+            # Add ingredients
+            quantities = request.form.getlist('quantity[]')
+            units = request.form.getlist('unit[]')
+            ingredient_names = request.form.getlist('ingredient_name[]')
+            
+            for i in range(len(ingredient_names)):
+                if ingredient_names[i]:
+                    ingredient = Ingredient(
+                        quantity=quantities[i],
+                        unit=units[i],
+                        ingredient_name=ingredient_names[i]
+                    )
+                    recipe.ingredients.append(ingredient)
+            
+            # Add preparation steps
+            prep_steps = request.form.getlist('preparation_step[]')
+            for i, step in enumerate(prep_steps, 1):
+                if step:
+                    prep_step = PreparationStep(
+                        step_number=i,
+                        etape=step
+                    )
+                    recipe.preparation_steps.append(prep_step)
+            
+            # Save everything to database
+            db.session.add(recipe)
+            db.session.commit()
+            
+            flash('Recipe added successfully!', 'success')
+            return redirect(url_for('view_recipe', recipe_id=recipe.id))
+            
+        except Exception as e:
+            db.session.rollback()
+            logger.error(f"Error submitting recipe: {str(e)}")
+            flash('An error occurred while saving the recipe. Please try again.', 'error')
+            return redirect(url_for('add_recipe_form'))
+            
+    return redirect(url_for('add_recipe_form'))
 
 @app.route('/recipe/<int:recipe_id>')
 def view_recipe(recipe_id):
-    conn = mysql.connector.connect(**db_config)
-    cursor = conn.cursor(dictionary=True)
-    
-    # Récupérer les détails de la recette
-    cursor.execute("SELECT * FROM recipes WHERE id = %s", (recipe_id,))
-    recipe = cursor.fetchone()
-    
-    # Récupérer les ingrédients
-    cursor.execute("SELECT * FROM ingredients WHERE recipe_id = %s", (recipe_id,))
-    ingredients = cursor.fetchall()
-    
-    # Récupérer les étapes de préparation
-    cursor.execute("SELECT * FROM preparation_steps WHERE recipe_id = %s ORDER BY step_number", (recipe_id,))
-    steps = cursor.fetchall()
-    
-    cursor.close()
-    conn.close()
-    
-    return render_template('recipe_detail.html', recipe=recipe, ingredients=ingredients, steps=steps)
+    recipe = Recipe.query.get_or_404(recipe_id)
+    return render_template('recipe_detail.html', recipe=recipe)
 
 @app.route('/country/<country_name>')
 def country_recipes(country_name):
@@ -587,22 +632,15 @@ def search_recipes():
     if not query:
         return redirect(url_for('index'))
     
-    conn = mysql.connector.connect(**db_config)
-    cursor = conn.cursor(dictionary=True)
-    
-    # Search in recipe names and descriptions
     search_term = f"%{query}%"
-    cursor.execute("""
-        SELECT * FROM recipes 
-        WHERE name LIKE %s 
-        OR description LIKE %s 
-        OR category LIKE %s
-        OR country LIKE %s
-    """, (search_term, search_term, search_term, search_term))
-    
-    recipes = cursor.fetchall()
-    cursor.close()
-    conn.close()
+    recipes = Recipe.query.filter(
+        db.or_(
+            Recipe.name.ilike(search_term),
+            Recipe.description.ilike(search_term),
+            Recipe.category.ilike(search_term),
+            Recipe.country.ilike(search_term)
+        )
+    ).all()
     
     return render_template('search_results.html', recipes=recipes, query=query)
 
@@ -632,5 +670,6 @@ def init_db():
         logger.error(f"Error initializing database: {str(e)}")
 
 if __name__ == '__main__':
-    init_db()  # Initialize database before running the app
-    app.run(debug=app.config['FLASK_DEBUG'])
+    with app.app_context():
+        db.create_all()
+    app.run(debug=True)

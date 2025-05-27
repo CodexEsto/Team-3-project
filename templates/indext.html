@@ -35,10 +35,13 @@
   <!--end nav-->
   <!-- header -->
   <header>
-    <div class="about" id="about">
-      <h1>About-us</h1>
+    <div class="about">
       <p>
-        Welcome to our web site! <br /><span>We are passionate about sharing delicious recipes and culinary
+        {% if current_user.is_authenticated %}
+          Welcome {{ current_user.username }} to our website! <br /><span>We are passionate about sharing delicious recipes and culinary
+        {% else %}
+          Welcome to our website! <br /><span>We are passionate about sharing delicious recipes and culinary
+        {% endif %}
           inspiration from <br />around the world. Join us on this flavorful
           journey!</span>
       </p>
@@ -95,7 +98,7 @@
         </div>
       </div>
       <div class="more-categories">
-        <a href="{{ url_for('search_recipes') }}" class="view-more">View More Categories</a>
+        <a href="{{ url_for('categories') }}" class="view-more">View More Categories</a>
       </div>
     </div>
     <!--end category-->
@@ -146,6 +149,19 @@
       </div>
     </div>
     <!--end world cuisine-->
+    
+    <!-- About Us Section -->
+    <div class="about-section" id="about">
+      <h1>About Us</h1>
+      <div class="about-content">
+        <p>
+          We are passionate about sharing delicious recipes and culinary inspiration from around the world. 
+          <span>Our mission is to bring the joy of cooking to every kitchen and help you discover amazing flavors 
+          from across the globe. Join us on this flavorful journey!</span>
+        </p>
+      </div>
+    </div>
+    <!--end about section-->
   </main>
   <!--end main-->
   <!-- footer -->
@@ -156,19 +172,19 @@
       </div>
       <div class="footer-section">
         <h2>Quick Links</h2>
-        <br class="footer-links">
+        <div class="footer-links">
           <a href="#about">About Us</a><br>
           <a href="#category">Categories</a><br>
-          <a href="#world-cuisine">World Cuisine</a></br>
+          <a href="#world-cuisine">World Cuisine</a><br>
           <a href="{{ url_for('contact') }}">Contact Us</a>
         </div>
       </div>
       <div class="footer-section">
         <h2>Connect With Us</h2>
         <div class="social-links">
-          <a href="#" class="social-icon">Facebook</a></br>
-          <a href="#" class="social-icon">Instagram</a></br>
-          <a href="#" class="social-icon">Youtube</a></br>
+          <a href="#" class="social-icon">Facebook</a><br>
+          <a href="#" class="social-icon">Instagram</a><br>
+          <a href="#" class="social-icon">Youtube</a><br>
           <a href="#" class="social-icon">Pinterest</a>
         </div>
       </div>
@@ -177,7 +193,6 @@
     <div class="footer-bottom">
       <p>&copy; 2025 site. All Rights Reserved.</p>
     </div>
-         
   </footer>
   <!--end footer-->
 </body>

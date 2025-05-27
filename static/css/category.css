@@ -1,0 +1,250 @@
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,300..700&display=swap");
+
+
+h1 {
+    color: #ff6500;
+    text-align: center;
+    letter-spacing: 0.2cm;
+    font-size: 3rem;
+    margin-bottom: 20px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.384);
+}
+.introduction{
+    font-weight: bold;
+    color: #ffff;
+    text-align: center;
+}
+.header {
+    position: relative;
+    top: 40px;
+    
+   padding: 30px;
+    background: linear-gradient(to right, #ff66009f,#f9c74f );    
+}
+main{
+        position: relative;
+    top: 40px;
+    
+   padding: 30px;
+}
+* {
+    padding:
+  0;
+    margin:
+  0;
+  }
+input{
+  font: inherit;/*KATAWRAT FONT*/
+
+}
+.box{
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.box input{
+    width: 450px;
+border: #ffffff;
+border-radius: 20px;
+padding:.70rem ;
+outline: none;
+}
+h2 {
+    text-align: center;
+    font-size: 2.2rem;
+    margin-bottom: 40px;
+    color: var(--text-color);
+    position: relative;
+    padding-bottom: 15px;
+}
+:root {
+    --primary-color: #ff6600bd;
+    --secondary-color: #f9c74f;
+    --text-color: #333;
+    --bg-color: #f8f9fa;
+    --card-bg: #fff;
+    --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+h2::after {/*ajouter aprés le h2*/
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 3px;
+    background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+}
+.categories-grid {
+    display: grid;/*Transforme le conteneur en une grille CSS*/
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));/*Définit le nombre de colonnes*/
+    gap: 30px;/*Espace entre les éléments de la grille*/
+    margin-bottom: 40px;/*Espace en bas de la grille*/
+}
+
+.category-card {
+    background-color: var(--card-bg);
+    border-radius: 10px;
+    overflow: hidden;/*masque les débordements*/
+    box-shadow: var(--shadow);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.category-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+}
+
+.category-image-container {
+    position: relative;
+    height: 200px;
+    overflow: hidden;
+}
+
+.category-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s;
+}
+
+.category-card:hover .category-image {
+    transform: scale(1.05);
+}
+
+.category-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.5));
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0.8;
+    transition: opacity 0.3s;
+}
+
+.category-card:hover .category-overlay {
+    opacity: 1;
+}
+
+.category-icon {
+    font-size: 3rem;
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.category-info {
+    padding: 25px;
+}
+
+.category-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    color: var(--text-color);
+}
+
+.category-description {
+    color: #666;
+    margin-bottom: 15px;
+    font-size: 0.95rem;
+    line-height: 1.5;/*Espacement entre les lignes*/
+}
+
+.category-count {
+    color: #777;
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+}
+
+.category-count span {
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.category-button {
+    display: inline-block;
+    background: linear-gradient(to right, var(--primary-color), #ff9e53);
+    color: white;
+    text-decoration: none;
+    padding: 10px 20px;
+    border-radius: 30px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.category-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .categories-grid {
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    }
+    
+    .section-title {
+        font-size: 1.8rem;
+    }
+}
+/* Responsive Styles */
+@media (max-width: 480px) {
+    .categories-grid {
+        grid-template-columns: 1fr;/* Une seule colonne sur les petits écrans */
+        /*KATSAHAL L9RAYA FCHACHAT SRAR*/
+        
+    }
+    
+    .category-image-container {
+        height: 180px;/* Ajuster la hauteur de l'image 180PX */
+    }
+    
+    .category-info {
+        padding: 20px;/* Réduire le rembourrage */
+    }
+    
+    .category-title {
+        font-size: 1.3rem;/* Réduire la taille de la police */
+    }
+    
+    .main-nav {
+        flex-wrap: wrap; /* Permettre le retour à la ligne */
+    }
+    
+    .main-nav a {
+        margin: 5px;
+    }
+} 
+.add-recipe-btn {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s;
+    z-index: 100;
+}
+
+.add-recipe-btn:hover {
+    transform: scale(1.1);
+    background-color: #f9c74f;
+}
+
+
