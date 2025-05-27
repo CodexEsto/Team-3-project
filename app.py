@@ -29,8 +29,8 @@ app.jinja_loader = ChoiceLoader([
 # Configuration
 class Config:
     SECRET_KEY = os.getenv('FLASK_SECRET_KEY', 'your-secret-key-here')
-    # Update database URI to use MySQL
-    SQLALCHEMY_DATABASE_URI = 'mysql://root:123456789@localhost/recipe_db'
+    # Mise à jour de l'URI de base de données pour utiliser mysql-connector-python
+    SQLALCHEMY_DATABASE_URI = 'mysql+mysqlconnector://root:123456789@localhost/recipe_db'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     
     # Upload Configuration for Recipes
@@ -597,15 +597,6 @@ def thank_you():
 def submit_contact():
     return redirect(url_for('contact'))
 
-@app.route('/world-cuisine')
-def world_cuisine():
-    return render_template('WORLD.html')
-
-@app.route('/categories')
-def categories():
-    return render_template('category.html')
-
-
 @app.route('/category/<category_name>')
 def category_recipes(category_name):
     conn = mysql.connector.connect(**db_config)
@@ -639,6 +630,46 @@ def country_recipes(country_name):
     conn.close()
     
     return render_template('country_recipes.html', country=country_name, recipes=recipes)
+
+# Ajouter cette nouvelle route pour la recherche de recettes
+@app.route('/search', methods=['GET'])
+def search_recipes():
+    query = request.args.get('q', '')
+    
+    if not query:
+        return render_template('search_results.html', recipes=[], query='')
+    
+    try:
+        # Connecter à la base de données
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor(dictionary=True)
+        
+        # Rechercher dans les noms de recettes, descriptions et ingrédients
+        search_term = f"%{query}%"
+        
+        # Recherche dans les recettes
+        cursor.execute("""
+            SELECT r.* FROM recipes r 
+            WHERE r.name LIKE %s 
+            OR r.description LIKE %s 
+            OR r.category LIKE %s
+            OR r.country LIKE %s
+            OR r.id IN (
+                SELECT DISTINCT recipe_id FROM ingredients 
+                WHERE ingredient_name LIKE %s
+            )
+        """, (search_term, search_term, search_term, search_term, search_term))
+        
+        recipes = cursor.fetchall()
+        
+        cursor.close()
+        conn.close()
+        
+        return render_template('search_results.html', recipes=recipes, query=query)
+    except Exception as e:
+        logger.error(f"Error in search: {str(e)}")
+        flash('An error occurred while searching. Please try again.', 'error')
+        return render_template('search_results.html', recipes=[], query=query)
 
 # Database initialization
 def init_db():
