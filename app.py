@@ -29,7 +29,8 @@ app.jinja_loader = ChoiceLoader([
 # Configuration
 class Config:
     SECRET_KEY = os.getenv('FLASK_SECRET_KEY', 'your-secret-key-here')
-    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', 'sqlite:///app.db')
+    # Update database URI to use MySQL
+    SQLALCHEMY_DATABASE_URI = 'mysql://root:123456789@localhost/recipe_db'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     
     # Upload Configuration for Recipes
@@ -46,7 +47,7 @@ class Config:
     MAIL_DEFAULT_SENDER = 'salmabbdll6@gmail.com'
     ADMIN_EMAIL = 'salmabbdll6@gmail.com'
     
-    FLASK_DEBUG = os.getenv('FLASK_DEBUG', True)
+    FLASK_DEBUG = True
     WTF_CSRF_SECRET_KEY = os.getenv('CSRF_SECRET_KEY', 'your-csrf-secret-key')
 
 app.config.from_object(Config)
@@ -98,6 +99,9 @@ class User(UserMixin, db.Model):
     is_verified = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     last_login = db.Column(db.DateTime)
+    
+    # Relationships
+    recipes = db.relationship('Recipe', backref='author', lazy=True)
     
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -152,6 +156,45 @@ class LoginAttempt(db.Model):
         ).count()
         return attempts >= max_attempts
 
+class Recipe(db.Model):
+    __tablename__ = 'recipes'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(200), nullable=False)
+    category = db.Column(db.String(100))
+    country = db.Column(db.String(100))
+    time = db.Column(db.String(50))
+    difficulty = db.Column(db.String(50))
+    description = db.Column(db.Text)
+    image = db.Column(db.String(255))
+    calories = db.Column(db.Integer)
+    proteins = db.Column(db.Integer)
+    carbs = db.Column(db.Integer)
+    fats = db.Column(db.Integer)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # Relationships
+    ingredients = db.relationship('Ingredient', backref='recipe', lazy=True, cascade="all, delete-orphan")
+    preparation_steps = db.relationship('PreparationStep', backref='recipe', lazy=True, cascade="all, delete-orphan")
+
+class Ingredient(db.Model):
+    __tablename__ = 'ingredients'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    recipe_id = db.Column(db.Integer, db.ForeignKey('recipes.id'), nullable=False)
+    quantity = db.Column(db.String(50))
+    unit = db.Column(db.String(50))
+    ingredient_name = db.Column(db.String(200), nullable=False)
+
+class PreparationStep(db.Model):
+    __tablename__ = 'preparation_steps'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    recipe_id = db.Column(db.Integer, db.ForeignKey('recipes.id'), nullable=False)
+    step_number = db.Column(db.Integer, nullable=False)
+    etape = db.Column(db.Text, nullable=False)
+
 # Utility functions
 def validate_email(email):
     if not email:
@@ -193,49 +236,62 @@ def index():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    if current_user.is_authenticated:
-        return redirect(url_for('index'))
-        
-    form = {
-        'email': request.form.get('email', '')
-    }
-    
-    if request.method == 'POST':
-        email = request.form.get('email')
-        password = request.form.get('password')
-        ip_address = get_client_ip(request)
-        
-        if LoginAttempt.check_attempts(email, ip_address):
-            flash('Too many failed attempts. Please try again later.', 'error')
-            return render_template('login.html', form=form)
+    try:
+        if current_user.is_authenticated:
+            return redirect(url_for('index'))
             
-        is_valid, message = validate_email(email)
-        if not is_valid:
-            flash(message, 'error')
-            return render_template('login.html', form=form)
-            
-        user = User.query.filter_by(email=email).first()
-        attempt = LoginAttempt(email=email, ip_address=ip_address)
+        form = {
+            'email': request.form.get('email', '')
+        }
         
-        if user and user.check_password(password):
-            if not user.is_active:
-                flash('Your account has been deactivated. Please contact support.', 'error')
+        if request.method == 'POST':
+            email = request.form.get('email')
+            password = request.form.get('password')
+            ip_address = get_client_ip(request)
+            
+            # Validate email
+            is_valid, message = validate_email(email)
+            if not is_valid:
+                flash(message, 'error')
+                return render_template('login.html', form=form)
+            
+            try:
+                # Check login attempts
+                if LoginAttempt.check_attempts(email, ip_address):
+                    flash('Too many failed attempts. Please try again later.', 'error')
+                    return render_template('login.html', form=form)
+                
+                # Find user
+                user = User.query.filter_by(email=email).first()
+                attempt = LoginAttempt(email=email, ip_address=ip_address)
+                
+                if user and user.check_password(password):
+                    if not user.is_active:
+                        flash('Your account has been deactivated. Please contact support.', 'error')
+                        return render_template('login.html', form=form)
+                    
+                    attempt.success = True
+                    db.session.add(attempt)
+                    user.update_last_login()
+                    login_user(user)
+                    
+                    next_page = request.args.get('next')
+                    return redirect(next_page or url_for('index'))
+                
+                db.session.add(attempt)
+                db.session.commit()
+                flash('Invalid email or password.', 'error')
+                return render_template('login.html', form=form)
+            except Exception as e:
+                logger.error(f"Database error during login: {str(e)}")
+                flash('An error occurred. Please try again.', 'error')
                 return render_template('login.html', form=form)
                 
-            attempt.success = True
-            db.session.add(attempt)
-            user.update_last_login()
-            login_user(user)
-            
-            next_page = request.args.get('next')
-            return redirect(next_page or url_for('index'))
-        
-        db.session.add(attempt)
-        db.session.commit()
-        flash('Invalid email or password.', 'error')
         return render_template('login.html', form=form)
-        
-    return render_template('login.html', form=form)
+    except Exception as e:
+        logger.error(f"Unexpected error in login route: {str(e)}")
+        flash('An unexpected error occurred. Please try again.', 'error')
+        return render_template('login.html', form={'email': ''})
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
@@ -296,7 +352,120 @@ def signup():
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for('login'))
+    flash('You have been logged out successfully.', 'success')
+    return redirect(url_for('index'))
+
+def generate_reset_token():
+    return serializer.dumps(str(datetime.utcnow().timestamp()))
+
+def send_password_reset_email(user, token):
+    reset_url = url_for('reset_password', token=token, _external=True)
+    try:
+        msg = Message('Password Reset Request',
+                    sender=app.config['MAIL_DEFAULT_SENDER'],
+                    recipients=[user.email])
+        msg.body = f"""To reset your password, visit the following link:
+
+{reset_url}
+
+If you did not make this request, simply ignore this email and no changes will be made.
+
+This link will expire in 30 minutes.
+"""
+        mail.send(msg)
+        return True
+    except Exception as e:
+        logger.error(f"Error sending password reset email: {str(e)}")
+        return False
+
+@app.route('/forgot-password', methods=['GET', 'POST'])
+def forgot_password():
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+        
+    if request.method == 'POST':
+        email = request.form.get('email')
+        user = User.query.filter_by(email=email).first()
+        
+        if user:
+            try:
+                # Generate token
+                token = generate_reset_token()
+                
+                # Save reset token
+                reset_record = PasswordReset(
+                    user_id=user.id,
+                    token=token,
+                    expires_at=datetime.utcnow() + timedelta(minutes=30)
+                )
+                db.session.add(reset_record)
+                db.session.commit()
+                
+                # Send email
+                if send_password_reset_email(user, token):
+                    flash('Password reset instructions have been sent to your email.', 'success')
+                else:
+                    db.session.delete(reset_record)
+                    db.session.commit()
+                    flash('Error sending reset email. Please try again.', 'error')
+            except Exception as e:
+                logger.error(f"Error in forgot password: {str(e)}")
+                db.session.rollback()
+                flash('An error occurred. Please try again.', 'error')
+        else:
+            # For security, don't reveal if email exists
+            flash('Password reset instructions have been sent if the email exists.', 'success')
+            
+        return redirect(url_for('login'))
+        
+    return render_template('forgot_password.html')
+
+@app.route('/reset-password/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+        
+    # Verify token
+    reset_record = PasswordReset.query.filter_by(
+        token=token,
+        used=False
+    ).filter(PasswordReset.expires_at > datetime.utcnow()).first()
+    
+    if not reset_record:
+        flash('Invalid or expired reset link.', 'error')
+        return redirect(url_for('login'))
+        
+    if request.method == 'POST':
+        password = request.form.get('password')
+        confirm_password = request.form.get('confirm_password')
+        
+        if password != confirm_password:
+            flash('Passwords do not match.', 'error')
+            return render_template('reset_password.html')
+            
+        is_valid, message = User.validate_password(password)
+        if not is_valid:
+            flash(message, 'error')
+            return render_template('reset_password.html')
+            
+        try:
+            # Update password
+            user = User.query.get(reset_record.user_id)
+            user.set_password(password)
+            
+            # Mark token as used
+            reset_record.used = True
+            
+            db.session.commit()
+            flash('Your password has been updated! Please log in.', 'success')
+            return redirect(url_for('login'))
+        except Exception as e:
+            logger.error(f"Error resetting password: {str(e)}")
+            db.session.rollback()
+            flash('An error occurred. Please try again.', 'error')
+            return render_template('reset_password.html')
+            
+    return render_template('reset_password.html')
 
 # Routes - Recipe Management
 @app.route('/add-recipe')
@@ -304,72 +473,94 @@ def logout():
 def add_recipe_form():
     return render_template('add-recipe.html')
 
+@app.route('/world-cuisine')
+def world_cuisine():
+    return render_template('WORLD.html')
+
+@app.route('/categories')
+def categories():
+    return render_template('category.html')
+
 @app.route('/addrecipe/submit', methods=['POST'])
 @login_required
 def submit_recipe():
     if request.method == 'POST':
-        # les données principales
-        name = request.form['name']
-        category = request.form['category']
-        country = request.form.get('country', '')
-        time = request.form['time']
-        difficulty = request.form['difficulty']
-        description = request.form.get('description', '')
-        calories = int(request.form.get('calories')) if request.form.get('calories') else None
-        proteins = int(request.form.get('proteins')) if request.form.get('proteins') else None
-        carbs = int(request.form.get('carbs')) if request.form.get('carbs') else None
-        fats = int(request.form.get('fats')) if request.form.get('fats') else None
-        
-        # image
-        image = request.files['image']
-        if image:
-            filename = secure_filename(image.filename)
-            image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            image.save(image_path)
-            db_image_path = 'uploads/' + filename
-           
-        conn = mysql.connector.connect(**db_config)
-        cursor = conn.cursor()
-        
-        # recette
-        insert_recipe = """
-        INSERT INTO recipes 
-        (name, category, country, time, difficulty, description, image, calories, proteins, carbs, fats)
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-        """
-        recipe_data = (name, category, country, time, difficulty, description, db_image_path, calories, proteins, carbs, fats)
-        cursor.execute(insert_recipe, recipe_data)
-        recipe_id = cursor.lastrowid  
-        
-        # ingrédients
-        quantities = request.form.getlist('quantity[]')
-        units = request.form.getlist('unit[]')
-        ingredient_names = request.form.getlist('ingredient_name[]')
-        
-        for i in range(len(ingredient_names)):
-            if ingredient_names[i]:  
-                insert_ingredient = """
-                INSERT INTO ingredients (recipe_id, quantity, unit, ingredient_name)
-                VALUES (%s, %s, %s, %s)
-                """
-                ingredient_data = (recipe_id, quantities[i], units[i], ingredient_names[i])
-                cursor.execute(insert_ingredient, ingredient_data)
-        
-        # préparation
-        prep_steps = request.form.getlist('preparation_step[]')
-        for i, step in enumerate(prep_steps, 1):
-            if step:  
-                insert_step = """
-                INSERT INTO preparation_steps (recipe_id, step_number, etape)
-                VALUES (%s, %s, %s)
-                """
-                preparation_data = (recipe_id, i, step)
-                cursor.execute(insert_step, preparation_data)
-        
-        conn.commit()
-        cursor.close()
-        conn.close()
-        return redirect(url_for('view_recipe', recipe_id=recipe_id))
+        try:
+            # Get recipe data
+            name = request.form['name']
+            category = request.form['category']
+            country = request.form.get('country', '')
+            time = request.form['time']
+            difficulty = request.form['difficulty']
+            description = request.form.get('description', '')
+            calories = int(request.form.get('calories')) if request.form.get('calories') else None
+            proteins = int(request.form.get('proteins')) if request.form.get('proteins') else None
+            carbs = int(request.form.get('carbs')) if request.form.get('carbs') else None
+            fats = int(request.form.get('fats')) if request.form.get('fats') else None
+            
+            # Handle image upload
+            image = request.files['image']
+            db_image_path = None
+            if image:
+                filename = secure_filename(image.filename)
+                image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                image.save(image_path)
+                db_image_path = 'uploads/' + filename
+            
+            # Create recipe
+            recipe = Recipe(
+                name=name,
+                category=category,
+                country=country,
+                time=time,
+                difficulty=difficulty,
+                description=description,
+                image=db_image_path,
+                calories=calories,
+                proteins=proteins,
+                carbs=carbs,
+                fats=fats,
+                user_id=current_user.id
+            )
+            
+            # Add ingredients
+            quantities = request.form.getlist('quantity[]')
+            units = request.form.getlist('unit[]')
+            ingredient_names = request.form.getlist('ingredient_name[]')
+            
+            for i in range(len(ingredient_names)):
+                if ingredient_names[i]:
+                    ingredient = Ingredient(
+                        quantity=quantities[i],
+                        unit=units[i],
+                        ingredient_name=ingredient_names[i]
+                    )
+                    recipe.ingredients.append(ingredient)
+            
+            # Add preparation steps
+            prep_steps = request.form.getlist('preparation_step[]')
+            for i, step in enumerate(prep_steps, 1):
+                if step:
+                    prep_step = PreparationStep(
+                        step_number=i,
+                        etape=step
+                    )
+                    recipe.preparation_steps.append(prep_step)
+            
+            # Save everything to database
+            db.session.add(recipe)
+            db.session.commit()
+            
+            flash('Recipe added successfully!', 'success')
+            return redirect(url_for('view_recipe', recipe_id=recipe.id))
+            
+        except Exception as e:
+            db.session.rollback()
+            logger.error(f"Error submitting recipe: {str(e)}")
+            flash('An error occurred while saving the recipe. Please try again.', 'error')
+            return redirect(url_for('add_recipe_form'))
+            
+    return redirect(url_for('add_recipe_form'))
 
 
 @app.route('/contact', methods=['GET', 'POST'])
@@ -432,25 +623,8 @@ def category_recipes(category_name):
 
 @app.route('/recipe/<int:recipe_id>')
 def view_recipe(recipe_id):
-    conn = mysql.connector.connect(**db_config)
-    cursor = conn.cursor(dictionary=True)
-    
-    # Récupérer les détails de la recette
-    cursor.execute("SELECT * FROM recipes WHERE id = %s", (recipe_id,))
-    recipe = cursor.fetchone()
-    
-    # Récupérer les ingrédients
-    cursor.execute("SELECT * FROM ingredients WHERE recipe_id = %s", (recipe_id,))
-    ingredients = cursor.fetchall()
-    
-    # Récupérer les étapes de préparation
-    cursor.execute("SELECT * FROM preparation_steps WHERE recipe_id = %s ORDER BY step_number", (recipe_id,))
-    steps = cursor.fetchall()
-    
-    cursor.close()
-    conn.close()
-    
-    return render_template('recipe_detail.html', recipe=recipe, ingredients=ingredients, steps=steps)
+    recipe = Recipe.query.get_or_404(recipe_id)
+    return render_template('recipe_detail.html', recipe=recipe)
 
 @app.route('/country/<country_name>')
 def country_recipes(country_name):
@@ -466,24 +640,32 @@ def country_recipes(country_name):
     
     return render_template('country_recipes.html', country=country_name, recipes=recipes)
 
-# Update the route name to match the endpoint expected by templates
-@app.route('/forgot_password', methods=['GET', 'POST'])
-def forgot_password():
-    # Simple placeholder for now
-    if request.method == 'POST':
-        email = request.form.get('email')
-        # In a real implementation, you would:
-        # 1. Verify the email exists
-        # 2. Generate a token
-        # 3. Send a password reset email
-        flash('If your email is registered, you will receive password reset instructions.', 'info')
-        return redirect(url_for('login'))
-    return render_template('forgot_password.html')
-
-
 # Database initialization
-with app.app_context():
-    db.create_all()
+def init_db():
+    try:
+        with app.app_context():
+            # Create all tables
+            db.create_all()
+            logger.info("Database tables created successfully")
+            
+            # Check if admin user exists
+            admin = User.query.filter_by(email='admin@example.com').first()
+            if not admin:
+                # Create admin user
+                admin = User(
+                    fullname='Admin User',
+                    email='admin@example.com',
+                    is_active=True,
+                    is_verified=True
+                )
+                admin.set_password('Admin@123')
+                db.session.add(admin)
+                db.session.commit()
+                logger.info("Admin user created successfully")
+    except Exception as e:
+        logger.error(f"Error initializing database: {str(e)}")
 
 if __name__ == '__main__':
-    app.run(debug=app.config['FLASK_DEBUG'])
+    with app.app_context():
+        db.create_all()
+    app.run(debug=True)

@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css')}}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/global.css')}}">
-  <title>Document</title>
+  <title>Recipe World - Home</title>
 </head>
 
 <body>
@@ -36,10 +36,13 @@
   <!--end nav-->
   <!-- header -->
   <header>
-    <div class="about" id="about">
-      <h1>About-us</h1>
+    <div class="about">
       <p>
-        Welcome to our web site! <br /><span>We are passionate about sharing delicious recipes and culinary
+        {% if current_user.is_authenticated %}
+          Welcome {{ current_user.username }} to our website! <br /><span>We are passionate about sharing delicious recipes and culinary
+        {% else %}
+          Welcome to our website! <br /><span>We are passionate about sharing delicious recipes and culinary
+        {% endif %}
           inspiration from <br />around the world. Join us on this flavorful
           journey!</span>
       </p>
@@ -54,8 +57,8 @@
         </form>
       </div>
       <div class="search">
-        <form action="">
-          <input type="text" placeholder="Search for recipes" />
+        <form action="{{ url_for('search_recipes') }}" method="GET">
+          <input type="text" name="q" placeholder="Search for recipes" required />
           <button type="submit">Search</button>
         </form>
       </div>
@@ -113,20 +116,19 @@
       <p class="idee">Embark on a culinary journey across the globe</p>
       <div class="world-cuisine-grid">
         <div class="cuisine-card">
-          <a href="/country/Morocco">
+          <a href="{{ url_for('country_recipes', country_name='Morocco') }}">
             <img src="{{ url_for('static', filename='img/home/contri1.png') }}" alt="Moroccan Cuisine" />
             <div class="cuisine-info">
               <h3>Morocco</h3>
-              <p>
-                Dive into the rich spices and vibrant flavors of Moroccan cuisine.
+              <br>
+                Dive into the rich spices and vibrant flavors <br> of Moroccan cuisine.
               </p>
               <div class="learn-more">Learn More</div>
             </div>
           </a>
-
         </div>
         <div class="cuisine-card">
-          <a href="/country/France">
+          <a href="{{ url_for('country_recipes', country_name='France') }}">
             <img src="{{ url_for('static', filename='img/home/contri2.png') }}" alt="French Cuisine" />
             <div class="cuisine-info">
               <h3>France</h3>
@@ -136,10 +138,9 @@
               <div class="learn-more">Learn More</div>
             </div>
           </a>
-
         </div>
         <div class="cuisine-card">
-          <a href="/country/Canada">
+          <a href="{{ url_for('country_recipes', country_name='Canada') }}">
             <img src="{{ url_for('static', filename='img/home/contri3.png') }}" alt="Canadian Cuisine" />
             <div class="cuisine-info">
               <h3>Canada</h3>
@@ -156,6 +157,19 @@
       </div>
     </div>
     <!--end world cuisine-->
+    
+    <!-- About Us Section -->
+    <div class="about-section" id="about">
+      <h1>About Us</h1>
+      <div class="about-content">
+        <p>
+          We are passionate about sharing delicious recipes and culinary inspiration from around the world. 
+          <span>Our mission is to bring the joy of cooking to every kitchen and help you discover amazing flavors 
+          from across the globe. Join us on this flavorful journey!</span>
+        </p>
+      </div>
+    </div>
+    <!--end about section-->
   </main>
   <!--end main-->
   <!-- footer -->
@@ -187,7 +201,6 @@
     <div class="footer-bottom">
       <p>&copy; 2025 site. All Rights Reserved.</p>
     </div>
-         
   </footer>
   <!--end footer-->
 </body>

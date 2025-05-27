@@ -1,11 +1,13 @@
 /*global*/
 @import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,300..700&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap');
 
 :root {
   --orange: #ff6500;
   --bleu: #007bff;
   --bleu-hover: #0056b3;
   --orange-hover: #7c3201;
+  font-family: 'Lato', sans-serif;
 }
 
 a {
@@ -31,7 +33,7 @@ header::before {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.677);
+  background-color: rgba(0, 0, 0, 0.888);
 }
 
 header * {
@@ -45,7 +47,7 @@ header * {
   align-items: center;
   flex-direction: column;
   position: relative;
-  top: 60px;
+  top: 200px;
 }
 
 .about h1 {
@@ -325,4 +327,130 @@ main {
 }
 
 /* end world cuisine section */
+
+/* About Section */
+.about-section {
+  padding: 80px 20px;
+  background-color: #f9f9f9;
+  text-align: center;
+  margin: 50px 0;
+}
+
+.about-section h1 {
+  font-size: 2.5em;
+  color: #333;
+  margin-bottom: 30px;
+}
+
+.about-content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.about-content p {
+  font-size: 1.2em;
+  line-height: 1.8;
+  color: #666;
+}
+
+.about-content span {
+  display: block;
+  margin-top: 20px;
+  font-style: italic;
+  color: #888;
+}
+
+/* Responsive Styles */
+@media screen and (max-width: 1200px) {
+  header {
+    height: 600px;
+  }
+
+  .about h1 {
+    font-size: 50px;
+  }
+
+  .about p {
+    font-size: 24px;
+  }
+
+  .about span {
+    font-size: 20px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  header {
+    height: 500px;
+  }
+
+  .about {
+    padding: 20px;
+  }
+
+  .about h1 {
+    font-size: 40px;
+    top: 20px;
+  }
+
+  .about p {
+    font-size: 20px;
+    padding: 0 15px;
+  }
+
+  .about span {
+    font-size: 18px;
+  }
+
+  .search {
+    top: 60px;
+  }
+
+  .search input[type="text"] {
+    width: 250px;
+  }
+
+  .btn {
+    margin-top: 20px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  header {
+    height: 450px;
+  }
+
+  .about h1 {
+    font-size: 32px;
+    top: 10px;
+  }
+
+  .about p {
+    font-size: 18px;
+    padding: 0 10px;
+  }
+
+  .about span {
+    font-size: 16px;
+  }
+
+  .search {
+    top: 40px;
+  }
+
+  .search input[type="text"] {
+    width: 200px;
+    padding: 8px;
+  }
+
+  .search button {
+    padding: 8px 15px;
+    font-size: 14px;
+  }
+
+  .btn button {
+    padding: 8px 15px;
+    font-size: 14px;
+  }
+}
 
