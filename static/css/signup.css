@@ -221,6 +221,7 @@ h2 {
     color: #e65a00;
 }
 
+/* Flash Messages */
 .flash-messages {
     position: fixed;
     top: 20px;
@@ -231,8 +232,9 @@ h2 {
 .alert {
     padding: 15px 20px;
     margin-bottom: 10px;
-    border-radius: 8px;
-    font-size: 14px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    animation: slideIn 0.5s ease-out;
 }
 
 .alert-success {
@@ -245,6 +247,17 @@ h2 {
     background-color: #f8d7da;
     color: #721c24;
     border: 1px solid #f5c6cb;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
 }
 
 /* Responsive Design */
