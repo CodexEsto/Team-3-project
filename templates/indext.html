@@ -17,13 +17,21 @@
     </div>
     <ul>
       <li><a href="/">Home</a></li>
-      <li><a href="#about">About-us</a></li>
-      <li><a href="#category">Category </a></li>
-      <li><a href="#world-cuisine">World Cuisine</a></li>
-      <li><a href="">Contact us</a></li>
-
+      <li><a href="/#about">About-us</a></li>
+      <li><a href="/#category">Category </a></li>
+      <li><a href="/#world-cuisine">World Cuisine</a></li>
+      <li><a href="{{ url_for('contact') }}">Contact us</a></li>
     </ul>
-    <a class="Profile" href="">Profile</a>
+    {% if current_user.is_authenticated %}
+    <div class="profile-dropdown">
+      <a class="Profile" href="#">{{ current_user.fullname }}</a>
+      <div class="dropdown-content">
+        <a href="{{ url_for('logout') }}" class="logout-link">Logout</a>
+      </div>
+    </div>
+    {% else %}
+    <a class="Profile" href="{{ url_for('login') }}">Login</a>
+    {% endif %}
   </nav>
   <!--end nav-->
   <!-- header -->
@@ -37,7 +45,12 @@
       </p>
       <div class="btn">
         <form action="">
-          <a href="{{ url_for('add_recipe_form') }}"> <button type="button">Your recipes</button></a>
+          {% if current_user.is_authenticated %}
+          <a href="{{ url_for('add_recipe_form') }}"><button type="button">Your recipes</button></a>
+          {% else %}
+          <a href="{{ url_for('login', next=url_for('add_recipe_form')) }}"><button type="button">Your
+              recipes</button></a>
+          {% endif %}
         </form>
       </div>
       <div class="search">
@@ -58,34 +71,34 @@
       <div class="items">
         <div class="items-left">
           <div class="item">
-            <a href=""><img src="{{ url_for('static', filename='img/home/food1.jpg') }}" alt="" /><span>Lunch</span></a>
+            <a href="{{ url_for('category_recipes', category_name='Lunch') }}"><img src="{{ url_for('static', filename='img/home/food1.jpg') }}" alt="" /><span>Lunch</span></a>
           </div>
 
           <div class="item2">
-            <a href=""><img src="{{ url_for('static', filename='img/home/food2.jpg') }}" alt="" /><span>Quick & Easy
+            <a href="{{ url_for('category_recipes', category_name='Quick&Easy Recipe') }}"><img src="{{ url_for('static', filename='img/home/food2.jpg') }}" alt="" /><span>Quick & Easy
                 Recipes</span></a>
           </div>
         </div>
 
         <div class="items-center">
           <div class="item">
-            <a href=""><img src="{{ url_for('static', filename='img/home/food3.jpg') }}" alt="" /><span>For
+            <a href="{{ url_for('category_recipes', category_name='For GYM') }}"><img src="{{ url_for('static', filename='img/home/food3.jpg') }}" alt="" /><span>For
                 GYM</span></a>
           </div>
 
           <div class="item2">
-            <a href=""><img src="{{ url_for('static', filename='img/home/food4.jpg') }}"
+            <a href="{{ url_for('category_recipes', category_name='Desserts') }}"><img src="{{ url_for('static', filename='img/home/food4.jpg') }}"
                 alt="" /><span>Desserts</span></a>
           </div>
         </div>
 
         <div class="items-right">
           <div class="item">
-            <a href=""><img src="{{ url_for('static', filename='img/home/food5.jpg') }}"
+            <a href="{{ url_for('category_recipes', category_name='Vegetarian') }}"><img src="{{ url_for('static', filename='img/home/food5.jpg') }}"
                 alt="" /><span>Vegetarian</span></a>
           </div>
           <div class="item2">
-            <a href=""><img src="{{ url_for('static', filename='img/home/food6.jpg') }}" alt="" /><span>Jus</span></a>
+            <a href="{{ url_for('category_recipes', category_name='Jus') }}"><img src="{{ url_for('static', filename='img/home/food6.jpg') }}" alt="" /><span>Jus</span></a>
           </div>
         </div>
       </div>

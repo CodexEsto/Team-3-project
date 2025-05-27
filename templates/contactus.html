@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -9,20 +10,30 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='css/global.css')}}">
   <title>Contact Us - APP</title>
 </head>
+
 <body>
   <!-- Navigation -->
-  <nav>
+    <nav>
     <div class="logo">
-      <img src="{{ url_for('static', filename='img/logo.png') }}" class="logo-img" alt="Logo" />
+      <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo" />
     </div>
     <ul>
-      <li><a href="{{ url_for('index') }}">Home</a></li>
-      <li><a href="#about">About-us</a></li>
-      <li><a href="#category">Category</a></li>
-      <li><a href="#world-cuisine">World Cuisine</a></li>
-      <li><a href="{{ url_for('contact') }}" class="active">Contact us</a></li>
+      <li><a href="/">Home</a></li>
+      <li><a href="/#about">About-us</a></li>
+      <li><a href="/#category">Category </a></li>
+      <li><a href="/#world-cuisine">World Cuisine</a></li>
+      <li><a href="{{ url_for('contact') }}">Contact us</a></li>
     </ul>
-    <a class="profile" href="{{ url_for('profile') }}">Profile</a>
+    {% if current_user.is_authenticated %}
+    <div class="profile-dropdown">
+      <a class="Profile" href="#">{{ current_user.fullname }}</a>
+      <div class="dropdown-content">
+        <a href="{{ url_for('logout') }}" class="logout-link">Logout</a>
+      </div>
+    </div>
+    {% else %}
+    <a class="Profile" href="{{ url_for('login') }}">Login</a>
+    {% endif %}
   </nav>
 
   <!-- Main Content -->
@@ -30,7 +41,8 @@
     <section class="contact-hero">
       <div class="container">
         <h1>Get in Touch</h1>
-        <p class="subtitle">We'd love to hear from you! Reach out for partnerships, recipe suggestions, or media inquiries.</p>
+        <p class="subtitle">We'd love to hear from you! Reach out for partnerships, recipe suggestions, or media
+          inquiries.</p>
       </div>
     </section>
 
@@ -38,7 +50,7 @@
       <!-- Contact Form -->
       <section class="contact-form-section" aria-labelledby="form-heading">
         <h2 id="form-heading">Send Us a Message</h2>
-        <form class="contact-form" method="POST" action="{{ url_for('submit_contact') }}">
+        <form class="contact-form" method="POST" action="/contact">
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
           <div class="form-group">
             <label for="name">Full Name <span class="required">*</span></label>
@@ -97,56 +109,45 @@
           <div class="info-content">
             <h3>Visit Us</h3>
             <address>
-                Boulevard de l'Universite Mohammed 1er<br>
-                Oujda, Oriental 60000<br>
-                Morocco
+              Boulevard de l'Universite Mohammed 1er<br>
+              Oujda, Oriental 60000<br>
+              Morocco
             </address>
           </div>
         </div>
       </aside>
     </div>
   </main>
-  <footer>
-      <div class="footer-content">
-        <div class="footer-logo">
-          <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo"/>
-        </div>
-        <div class="footer-section">
-          <h2>Quick Links</h2>
-          
-            <a href="#about">About Us</a>
-            <a href="#category">Categories</a>
-            <a href="#world-cuisine">World Cuisine</a>
-            <a href="">Contact Us</a>
-          
-        </div>
-        <div class="footer-section">
-          <h2>Connect With Us</h2>
-          
-            <a href="#" class="social-icon">Facebook</a>
-            <a href="#" class="social-icon">Instagram</a>
-            <a href="#" class="social-icon">Youtube</a>
-            <a href="#" class="social-icon">Pinterest</a>
-          
-        </div>
+  <div class="footer">
+    <div class="footer-content">
+      <div class="footer-logo">
+        <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo" />
       </div>
-      <div class="ligne"></div>
-      <div class="footer-bottom">
-        <p>&copy; 2025 site. All Rights Reserved.</p>
-      </div>
-           
-    </footer>
-  
+      <div class="footer-section">
+        <h2>Quick Links</h2>
 
-  {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-      <div class="flash-messages">
-        {% for category, message in messages %}
-          <div class="alert alert-{{ category }}">{{ message }}</div>
-        {% endfor %}
+        <a href="/#about">About Us</a>
+        <a href="/#category">Categories</a>
+        <a href="/#world-cuisine">World Cuisine</a>
+        <a href="{{ url_for('contact') }}">Contact Us</a>
+
       </div>
-    {% endif %}
-  {% endwith %}
+      <div class="footer-section">
+        <h2>Connect With Us</h2>
+
+        <a href="#" class="social-icon">Facebook</a>
+        <a href="#" class="social-icon">Instagram</a>
+        <a href="#" class="social-icon">Youtube</a>
+        <a href="#" class="social-icon">Pinterest</a>
+
+      </div>
+    </div>
+    <div class="ligne"></div>
+    <div class="footer-bottom">
+      <p>&copy; 2025 site. All Rights Reserved.</p>
+    </div>
+         
+  </div>
 </body>
 
 </html>

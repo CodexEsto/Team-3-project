@@ -2,80 +2,89 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recipes from {{ country }}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/global.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/country.css') }}">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recipes from {{ country }}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/global.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/country.css') }}">
 </head>
 
 <body>
-    <!--nav-->
+  <!--nav-->
     <nav>
-        <div class="logo">
-            <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo" />
-        </div>
-        <ul>
-            <li><a href="/">Home</a></li>
-            <li><a href="/#about">About-us</a></li>
-            <li><a href="/#category">Category</a></li>
-            <li><a href="/world-cuisine">World Cuisine</a></li>
-            <li><a href="">Contact us</a></li>
-        </ul>
-        <a class="Profile" href="#">Profile</a>
-    </nav>
-
-    <div class="recipes-container">
-        <h1>Recipes from {{ country }}</h1>
-
-        {% if recipes %}
-        {% for recipe in recipes %}
-        <div class="recipe-card">
-            <img src="{{ url_for('static', filename=recipe.image) }}" alt="{{ recipe.name }}" class="recipe-image">
-            <div class="recipe-info">
-                <h2 class="recipe-title">{{ recipe.name }}</h2>
-                <div class="recipe-meta">
-                    <span>{{ recipe.category }}</span>
-                    <span>{{ recipe.difficulty }}</span>
-                    <span>{{ recipe.time }} min</span>
-                </div>
-                <p>{{ recipe.description[:100] }}{% if recipe.description|length > 100 %}...{% endif %}</p>
-                <a href="{{ url_for('view_recipe', recipe_id=recipe.id) }}" class="view-button">View recipe</a>
-            </div>
-        </div>
-        {% endfor %}
-        {% else %}
-        <div class="no-recipes">
-            <p>No recipes were found for this country.</p>
-            <p>Be the first to add a recipe for {{ country }}!</p>
-            <a href="{{ url_for('add_recipe_form') }}" class="view-button">Add a recipe</a>
-        </div>
-        {% endif %}
+    <div class="logo">
+      <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo" />
     </div>
+    <ul>
+      <li><a href="/">Home</a></li>
+      <li><a href="/#about">About-us</a></li>
+      <li><a href="/#category">Category </a></li>
+      <li><a href="/#world-cuisine">World Cuisine</a></li>
+      <li><a href="{{ url_for('contact') }}">Contact us</a></li>
+    </ul>
+    {% if current_user.is_authenticated %}
+    <div class="profile-dropdown">
+      <a class="Profile" href="#">{{ current_user.fullname }}</a>
+      <div class="dropdown-content">
+        <a href="{{ url_for('logout') }}" class="logout-link">Logout</a>
+      </div>
+    </div>
+    {% else %}
+    <a class="Profile" href="{{ url_for('login') }}">Login</a>
+    {% endif %}
+  </nav>
 
-    <!--footer-->
-     <div class="footer">
+  <div class="recipes-container">
+    <h1>Recipes from {{ country }}</h1>
+
+    {% if recipes %}
+    {% for recipe in recipes %}
+    <div class="recipe-card">
+      <img src="{{ url_for('static', filename=recipe.image) }}" alt="{{ recipe.name }}" class="recipe-image">
+      <div class="recipe-info">
+        <h2 class="recipe-title">{{ recipe.name }}</h2>
+        <div class="recipe-meta">
+          <span>{{ recipe.category }}</span>
+          <span>{{ recipe.difficulty }}</span>
+          <span>{{ recipe.time }} min</span>
+        </div>
+        <p>{{ recipe.description[:100] }}{% if recipe.description|length > 100 %}...{% endif %}</p>
+        <a href="{{ url_for('view_recipe', recipe_id=recipe.id) }}" class="view-button">View recipe</a>
+      </div>
+    </div>
+    {% endfor %}
+    {% else %}
+    <div class="no-recipes">
+      <p>No recipes were found for this country.</p>
+      <p>Be the first to add a recipe for {{ country }}!</p>
+      <a href="{{ url_for('add_recipe_form') }}" class="view-button">Add a recipe</a>
+    </div>
+    {% endif %}
+  </div>
+
+  <!--footer-->
+  <div class="footer">
     <div class="footer-content">
       <div class="footer-logo">
-        <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo"/>
+        <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo" />
       </div>
       <div class="footer-section">
         <h2>Quick Links</h2>
-        
-          <a href="/#about">About Us</a>
-          <a href="/#category">Categories</a>
-          <a href="/#world-cuisine">World Cuisine</a>
-          <a href="">Contact Us</a>
-        
+
+        <a href="/#about">About Us</a>
+        <a href="/#category">Categories</a>
+        <a href="/#world-cuisine">World Cuisine</a>
+        <a href="{{ url_for('contact') }}">Contact Us</a>
+
       </div>
       <div class="footer-section">
         <h2>Connect With Us</h2>
-        
-          <a href="#" class="social-icon">Facebook</a>
-          <a href="#" class="social-icon">Instagram</a>
-          <a href="#" class="social-icon">Youtube</a>
-          <a href="#" class="social-icon">Pinterest</a>
-        
+
+        <a href="#" class="social-icon">Facebook</a>
+        <a href="#" class="social-icon">Instagram</a>
+        <a href="#" class="social-icon">Youtube</a>
+        <a href="#" class="social-icon">Pinterest</a>
+
       </div>
     </div>
     <div class="ligne"></div>

@@ -12,19 +12,28 @@
 
 <body>
     <!--nav-->
-    <nav>
-        <div class="logo">
-            <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo" />
-        </div>
-        <ul>
-            <li><a href="/">Home</a></li>
-            <li><a href="/#about">About-us</a></li>
-            <li><a href="/#category">Category</a></li>
-            <li><a href="/#world-cuisine">World Cuisine</a></li>
-            <li><a href="#">Contact us</a></li>
-        </ul>
-        <a class="Profile" href="#">Profile</a>
-    </nav>
+  <nav>
+    <div class="logo">
+      <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo" />
+    </div>
+    <ul>
+      <li><a href="/">Home</a></li>
+      <li><a href="/#about">About-us</a></li>
+      <li><a href="/#category">Category </a></li>
+      <li><a href="/#world-cuisine">World Cuisine</a></li>
+      <li><a href="{{ url_for('contact') }}">Contact us</a></li>
+    </ul>
+    {% if current_user.is_authenticated %}
+    <div class="profile-dropdown">
+      <a class="Profile" href="#">{{ current_user.fullname }}</a>
+      <div class="dropdown-content">
+        <a href="{{ url_for('logout') }}" class="logout-link">Logout</a>
+      </div>
+    </div>
+    {% else %}
+    <a class="Profile" href="{{ url_for('login') }}">Login</a>
+    {% endif %}
+  </nav>
 
     <main>
         <div class="recipe-container">
@@ -106,7 +115,7 @@
                 <a href="#about">About Us</a>
                 <a href="#category">Categories</a>
                 <a href="#world-cuisine">World Cuisine</a>
-                <a href="">Contact Us</a>
+                <a href="{{ url_for('contact') }}">Contact Us</a>
 
             </div>
             <div class="footer-section">

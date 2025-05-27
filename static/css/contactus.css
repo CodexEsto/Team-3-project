@@ -10,15 +10,6 @@
   --orange-hover: #7c3201;
 }
 
-body {
-  font-family: 'Lato', sans-serif;
-  font-size: 16px;
-  color: #333;
-  line-height: 1.6;
-  margin: 0;
-  padding: 0;
-  background-color: #fff;
-}
 
 h1, h2, h3, h4, h5, h6 {
   font-family: 'Lato', serif;
@@ -34,77 +25,6 @@ ul {
   list-style: none;
 }
 
-/*nav bar*/
-.logo a {
-  font-size: 28px;
-  color: var(--orange);
-  margin: 0;
-  position: relative;
-  left: 20px;
-}
-
-.logo-img {
-  width: 100px;
-  height: 70px;
-  border-radius: 50%;
-  margin-left: 6px;
-}
-
-nav {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 70px;
-  background-color: #ffffff;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  z-index: 1000;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-nav ul {
-  display: flex;
-  gap: 25px;
-  margin: 0;
-  padding: 0;
-}
-
-nav ul li a:hover {
-  color: var(--orange);
-  background-color: #fdf2e9;
-}
-
-nav ul li a {
-  color: #34495e;
-  font-weight: bold;
-  font-size: 16px;
-  padding: 8px 12px;
-  border-radius: 5px;
-  transition: color 0.3s;
-}
-
-.profile {
-  display: flex;
-  color: #ffffff;
-  font-weight: bold;
-  position: relative;
-  right: 20px;
-  padding: 10px 20px;
-  border-radius: 20px;
-  background-color: var(--bleu);
-  transition: background-color 0.3s;
-}
-
-.profile:hover {
-  background-color: var(--bleu-hover);
-  transform: scale(1.1);
-}
-
-.profile.active {
-  background-color: var(--orange);
-}
 /* ================= CONTACT PAGE STYLING ================= */
 
 .container {
@@ -325,3 +245,10 @@ nav ul li a {
         margin-bottom: 8px;
     }
 }
+
+
+
+
+
+
+

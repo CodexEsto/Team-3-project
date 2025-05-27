@@ -119,8 +119,7 @@ class User(UserMixin, db.Model):
             return False, "Password must contain at least one lowercase letter"
         if not any(c.isdigit() for c in password):
             return False, "Password must contain at least one number"
-        if not any(c in "!@#$%^&*(),.?\":{}|<>" for c in password):
-            return False, "Password must contain at least one special character"
+        
         return True, ""
 
 class PasswordReset(db.Model):
@@ -305,14 +304,6 @@ def logout():
 def add_recipe_form():
     return render_template('add-recipe.html')
 
-@app.route('/world-cuisine')
-def world_cuisine():
-    return render_template('WORLD.html')
-
-@app.route('/categories')
-def categories():
-    return render_template('category.html')
-
 @app.route('/addrecipe/submit', methods=['POST'])
 @login_required
 def submit_recipe():
@@ -380,6 +371,65 @@ def submit_recipe():
         conn.close()
         return redirect(url_for('view_recipe', recipe_id=recipe_id))
 
+
+@app.route('/contact', methods=['GET', 'POST'])
+def contact():
+    if request.method == 'POST':
+        # Process form submission
+        name = request.form.get('name')
+        email = request.form.get('email')
+        phone = request.form.get('phone')
+        subject = request.form.get('subject')
+        message_content = request.form.get('message')
+        
+        try:
+            # Create email message
+            msg = Message(
+                subject=f"Contact Form: {subject}",
+                recipients=[app.config['ADMIN_EMAIL']],
+                body=f"From: {name} <{email}>\nPhone: {phone}\n\n{message_content}"
+            )
+            mail.send(msg)
+            flash('Your message has been sent successfully!', 'success')
+            return redirect(url_for('thank_you'))
+        except Exception as e:
+            logger.error(f"Error sending email: {str(e)}")
+            flash('An error occurred while sending your message. Please try again later.', 'error')
+    
+    return render_template('contactus.html')
+
+@app.route('/thank_you')
+def thank_you():
+    return render_template('thank_you.html')
+
+@app.route('/submit_contact')
+def submit_contact():
+    return redirect(url_for('contact'))
+
+@app.route('/world-cuisine')
+def world_cuisine():
+    return render_template('WORLD.html')
+
+@app.route('/categories')
+def categories():
+    return render_template('category.html')
+
+
+@app.route('/category/<category_name>')
+def category_recipes(category_name):
+    conn = mysql.connector.connect(**db_config)
+    cursor = conn.cursor(dictionary=True)
+    
+    # Retrieve recipes in the specified category
+    cursor.execute("SELECT * FROM recipes WHERE category = %s", (category_name,))
+    recipes = cursor.fetchall()
+    
+    cursor.close()
+    conn.close()
+    
+    return render_template('category-recipe.html', category=category_name, recipes=recipes)
+
+
 @app.route('/recipe/<int:recipe_id>')
 def view_recipe(recipe_id):
     conn = mysql.connector.connect(**db_config)
@@ -415,6 +465,21 @@ def country_recipes(country_name):
     conn.close()
     
     return render_template('country_recipes.html', country=country_name, recipes=recipes)
+
+# Update the route name to match the endpoint expected by templates
+@app.route('/forgot_password', methods=['GET', 'POST'])
+def forgot_password():
+    # Simple placeholder for now
+    if request.method == 'POST':
+        email = request.form.get('email')
+        # In a real implementation, you would:
+        # 1. Verify the email exists
+        # 2. Generate a token
+        # 3. Send a password reset email
+        flash('If your email is registered, you will receive password reset instructions.', 'info')
+        return redirect(url_for('login'))
+    return render_template('forgot_password.html')
+
 
 # Database initialization
 with app.app_context():
